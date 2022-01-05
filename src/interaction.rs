@@ -171,16 +171,16 @@ impl<'a> Display for ApplicationCommandOption<'a> {
 
 #[derive(Debug, Deserialize)]
 pub struct UserVariant<'a> {
-    name: Cow<'a, str>,
-    value: Option<User<'a>>,
-    options: Option<Vec<ApplicationCommandOption<'a>>>,
+    pub name: Cow<'a, str>,
+    pub value: Option<User<'a>>,
+    pub options: Option<Vec<ApplicationCommandOption<'a>>>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct ChannelVariant<'a> {
-    name: Cow<'a, str>,
-    value: Option<Channel<'a>>,
-    options: Option<Vec<ApplicationCommandOption<'a>>>,
+    pub name: Cow<'a, str>,
+    pub value: Option<Channel<'a>>,
+    pub options: Option<Vec<ApplicationCommandOption<'a>>>,
 }
 
 impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandOption<'a> {
