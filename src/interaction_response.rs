@@ -28,6 +28,14 @@ pub struct InteractionCallbackData<'a> {
     pub content: Option<Cow<'a, str>>,
     pub embeds: Option<Vec<Embed<'a>>>,
     pub allowed_mentions: Option<AllowedMentions<'a>>,
-    pub flags: Option<u64>,
+    pub flags: Option<InteractionCallbackDataFlags>,
     pub components: Option<Vec<Component<'a>>>,
+}
+
+#[derive(Debug, PartialEq, Serialize_repr)]
+#[repr(u8)]
+pub enum InteractionCallbackDataFlags {
+    /// Only the user that sent the interaction will see the response
+    Ephemeral = 1 << 6,
+    SuppressEmbeds = 1 << 2,
 }
