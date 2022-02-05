@@ -116,6 +116,11 @@ pub struct SelectOption<'a> {
 #[derive(Debug)]
 // #[serde(tag = "type")]
 pub enum ApplicationCommandInteractionDataOption<'a> {
+    // #[serde(rename = 1)]
+    SubCommand {
+        name: Cow<'a, str>,
+        options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
+    },
     // #[serde(rename = 3)]
     String {
         name: Cow<'a, str>,
@@ -135,15 +140,25 @@ pub enum ApplicationCommandInteractionDataOption<'a> {
         options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
     },
     // #[serde(rename = 6)]
-    User(Box<UserVariant<'a>>),
+    User {
+        name: Cow<'a, str>,
+        value: Option<Cow<'a, str>>,
+        options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
+    },
     // #[serde(rename = 7)]
     Channel(Box<ChannelVariant<'a>>),
     // #[serde(rename = 8)]
     Role {
         name: Cow<'a, str>,
-        value: Option<Role<'a>>,
+        value: Option<Cow<'a, str>>,
         options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
     },
+    // #[serde(rename = 9)]
+    // Mentionable {
+    //     name: Cow<'a, str>,
+    //     value: Option<Mentionable>,
+    //     options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
+    // },
     // #[serde(rename = 10)]
     Number {
         name: Cow<'a, str>,
@@ -167,13 +182,6 @@ impl<'a> Display for ApplicationCommandInteractionDataOption<'a> {
             _ => panic!("to string not implement for type"),
         }
     }
-}
-
-#[derive(Debug, Deserialize)]
-pub struct UserVariant<'a> {
-    pub name: Cow<'a, str>,
-    pub value: Option<User<'a>>,
-    pub options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -211,7 +219,10 @@ impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandInteractionDataOptio
 
                 for item in o {
                     let new_item = ApplicationCommandInteractionDataOption::deserialize(item)
-                        .map_err(|_| serde::de::Error::custom("sub option"))?;
+                        .map_err(|e| {
+                            println!("{e:?}");
+                            serde::de::Error::custom("sub option")
+                        })?;
                     new_options.push(new_item);
                 }
 
@@ -224,6 +235,7 @@ impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandInteractionDataOptio
         let value_raw = d_value.get("value");
 
         Ok(match message_type {
+            1 => ApplicationCommandInteractionDataOption::SubCommand { name, options },
             3 => ApplicationCommandInteractionDataOption::String {
                 name,
                 options,
@@ -241,17 +253,13 @@ impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandInteractionDataOptio
                 options,
                 value: value_raw.and_then(Value::as_bool),
             },
-            6 => ApplicationCommandInteractionDataOption::User(Box::new(UserVariant {
+            6 => ApplicationCommandInteractionDataOption::User {
                 name,
                 options,
-                value: if let Some(data) = value_raw {
-                    let user = User::deserialize(data)
-                        .map_err(|_| serde::de::Error::custom("bad user"))?;
-                    Some(user)
-                } else {
-                    None
-                },
-            })),
+                value: value_raw
+                    .and_then(Value::as_str)
+                    .map(|x| x.to_string().into()),
+            },
             7 => ApplicationCommandInteractionDataOption::Channel(Box::new(ChannelVariant {
                 name,
                 options,
@@ -266,13 +274,9 @@ impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandInteractionDataOptio
             8 => ApplicationCommandInteractionDataOption::Role {
                 name,
                 options,
-                value: if let Some(data) = value_raw {
-                    let role = Role::deserialize(data)
-                        .map_err(|_| serde::de::Error::custom("bad role"))?;
-                    Some(role)
-                } else {
-                    None
-                },
+                value: value_raw
+                    .and_then(Value::as_str)
+                    .map(|x| x.to_string().into()),
             },
             10 => ApplicationCommandInteractionDataOption::Number {
                 name,
