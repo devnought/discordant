@@ -9,7 +9,7 @@ pub struct User<'a> {
     pub id: Snowflake<'a>,
     pub username: Cow<'a, str>,
     pub discriminator: Cow<'a, str>,
-    pub avatar: Cow<'a, str>,
+    pub avatar: Option<Cow<'a, str>>,
     pub bot: Option<bool>,
     pub system: Option<bool>,
     pub mfa_enabled: Option<bool>,
