@@ -36,7 +36,7 @@ pub struct InteractionData<'a> {
     #[serde(rename = "type")]
     pub data_type: ApplicationCommandType,
     pub resolved: Option<ResolvedData<'a>>,
-    pub options: Option<Vec<ApplicationCommandOption<'a>>>,
+    pub options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
     pub custom_id: Option<Cow<'a, str>>,
     pub component_type: Option<ComponentType>,
     pub values: Option<Vec<SelectOption<'a>>>,
@@ -115,24 +115,24 @@ pub struct SelectOption<'a> {
 
 #[derive(Debug)]
 // #[serde(tag = "type")]
-pub enum ApplicationCommandOption<'a> {
+pub enum ApplicationCommandInteractionDataOption<'a> {
     // #[serde(rename = 3)]
     String {
         name: Cow<'a, str>,
         value: Option<Cow<'a, str>>,
-        options: Option<Vec<ApplicationCommandOption<'a>>>,
+        options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
     },
     // #[serde(rename = 4)]
     Integer {
         name: Cow<'a, str>,
         value: Option<i64>,
-        options: Option<Vec<ApplicationCommandOption<'a>>>,
+        options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
     },
     // #[serde(rename = 5)]
     Boolean {
         name: Cow<'a, str>,
         value: Option<bool>,
-        options: Option<Vec<ApplicationCommandOption<'a>>>,
+        options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
     },
     // #[serde(rename = 6)]
     User(Box<UserVariant<'a>>),
@@ -142,27 +142,27 @@ pub enum ApplicationCommandOption<'a> {
     Role {
         name: Cow<'a, str>,
         value: Option<Role<'a>>,
-        options: Option<Vec<ApplicationCommandOption<'a>>>,
+        options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
     },
     // #[serde(rename = 10)]
     Number {
         name: Cow<'a, str>,
         value: Option<f64>,
-        options: Option<Vec<ApplicationCommandOption<'a>>>,
+        options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
     },
 }
 
-impl<'a> Display for ApplicationCommandOption<'a> {
+impl<'a> Display for ApplicationCommandInteractionDataOption<'a> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            ApplicationCommandOption::String { name, value, .. } => {
-                write!(f, "{}-{:?}", name, value)
+            ApplicationCommandInteractionDataOption::String { name, value, .. } => {
+                write!(f, "{name}-{value:?}")
             }
-            ApplicationCommandOption::Integer { name, value, .. } => {
-                write!(f, "{}-{:?}", name, value)
+            ApplicationCommandInteractionDataOption::Integer { name, value, .. } => {
+                write!(f, "{name}-{value:?}")
             }
-            ApplicationCommandOption::Boolean { name, value, .. } => {
-                write!(f, "{}-{:?}", name, value)
+            ApplicationCommandInteractionDataOption::Boolean { name, value, .. } => {
+                write!(f, "{name}-{value:?}")
             }
             _ => panic!("to string not implement for type"),
         }
@@ -173,17 +173,17 @@ impl<'a> Display for ApplicationCommandOption<'a> {
 pub struct UserVariant<'a> {
     pub name: Cow<'a, str>,
     pub value: Option<User<'a>>,
-    pub options: Option<Vec<ApplicationCommandOption<'a>>>,
+    pub options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct ChannelVariant<'a> {
     pub name: Cow<'a, str>,
     pub value: Option<Channel<'a>>,
-    pub options: Option<Vec<ApplicationCommandOption<'a>>>,
+    pub options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
 }
 
-impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandOption<'a> {
+impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandInteractionDataOption<'a> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
@@ -210,7 +210,7 @@ impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandOption<'a> {
                 let mut new_options = Vec::with_capacity(o.len());
 
                 for item in o {
-                    let new_item = ApplicationCommandOption::deserialize(item)
+                    let new_item = ApplicationCommandInteractionDataOption::deserialize(item)
                         .map_err(|_| serde::de::Error::custom("sub option"))?;
                     new_options.push(new_item);
                 }
@@ -224,24 +224,24 @@ impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandOption<'a> {
         let value_raw = d_value.get("value");
 
         Ok(match message_type {
-            3 => ApplicationCommandOption::String {
+            3 => ApplicationCommandInteractionDataOption::String {
                 name,
                 options,
                 value: value_raw
                     .and_then(Value::as_str)
                     .map(|x| x.to_string().into()),
             },
-            4 => ApplicationCommandOption::Integer {
+            4 => ApplicationCommandInteractionDataOption::Integer {
                 name,
                 options,
                 value: value_raw.and_then(Value::as_i64),
             },
-            5 => ApplicationCommandOption::Boolean {
+            5 => ApplicationCommandInteractionDataOption::Boolean {
                 name,
                 options,
                 value: value_raw.and_then(Value::as_bool),
             },
-            6 => ApplicationCommandOption::User(Box::new(UserVariant {
+            6 => ApplicationCommandInteractionDataOption::User(Box::new(UserVariant {
                 name,
                 options,
                 value: if let Some(data) = value_raw {
@@ -252,7 +252,7 @@ impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandOption<'a> {
                     None
                 },
             })),
-            7 => ApplicationCommandOption::Channel(Box::new(ChannelVariant {
+            7 => ApplicationCommandInteractionDataOption::Channel(Box::new(ChannelVariant {
                 name,
                 options,
                 value: if let Some(data) = value_raw {
@@ -263,7 +263,7 @@ impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandOption<'a> {
                     None
                 },
             })),
-            8 => ApplicationCommandOption::Role {
+            8 => ApplicationCommandInteractionDataOption::Role {
                 name,
                 options,
                 value: if let Some(data) = value_raw {
@@ -274,7 +274,7 @@ impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandOption<'a> {
                     None
                 },
             },
-            10 => ApplicationCommandOption::Number {
+            10 => ApplicationCommandInteractionDataOption::Number {
                 name,
                 options,
                 value: value_raw.and_then(Value::as_f64),

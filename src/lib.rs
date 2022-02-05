@@ -2,6 +2,9 @@ use std::{borrow::Cow, collections::HashMap, convert::TryInto, num::ParseIntErro
 
 use sodiumoxide::crypto::sign::{self, PublicKey, Signature};
 
+mod application_command;
+pub use application_command::*;
+
 mod application;
 pub use application::*;
 
