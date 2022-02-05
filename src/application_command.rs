@@ -7,7 +7,7 @@ use crate::ChannelType;
 
 use super::Snowflake;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct ApplicationCommand<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<Snowflake<'a>>,
@@ -35,7 +35,13 @@ pub enum ApplicationCommandType {
     Message = 3,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+impl Default for ApplicationCommandType {
+    fn default() -> Self {
+        Self::ChatInput
+    }
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct ApplicationCommandOption<'a> {
     #[serde(rename = "type")]
     pub application_command_option_type: ApplicationCommandOptionType,
@@ -70,6 +76,12 @@ pub enum ApplicationCommandOptionType {
     Role = 8,
     Mentionable = 9,
     Number = 10,
+}
+
+impl Default for ApplicationCommandOptionType {
+    fn default() -> Self {
+        Self::SubCommand
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
