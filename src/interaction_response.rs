@@ -9,6 +9,7 @@ use super::{AllowedMentions, Component, Embed};
 pub struct InteractionResponse<'a> {
     #[serde(rename = "type")]
     pub response_type: InteractionCallbackType,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub data: Option<InteractionCallbackData<'a>>,
 }
 
@@ -24,11 +25,17 @@ pub enum InteractionCallbackType {
 
 #[derive(Debug, Default, Serialize)]
 pub struct InteractionCallbackData<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub tts: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub content: Option<Cow<'a, str>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub embeds: Option<Vec<Embed<'a>>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub allowed_mentions: Option<AllowedMentions<'a>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub flags: Option<InteractionCallbackDataFlags>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub components: Option<Vec<Component<'a>>>,
 }
 

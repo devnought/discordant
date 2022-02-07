@@ -31,10 +31,10 @@ pub enum InteractionType {
 
 #[derive(Debug, Deserialize)]
 pub struct InteractionData<'a> {
-    pub id: Snowflake<'a>,
-    pub name: Cow<'a, str>,
+    pub id: Option<Snowflake<'a>>,
+    pub name: Option<Cow<'a, str>>,
     #[serde(rename = "type")]
-    pub data_type: ApplicationCommandType,
+    pub data_type: Option<ApplicationCommandType>,
     pub resolved: Option<ResolvedData<'a>>,
     pub options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
     pub custom_id: Option<Cow<'a, str>>,
@@ -69,20 +69,31 @@ pub struct MessageInteraction<'a> {
     pub user: User<'a>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct Component<'a> {
     #[serde(rename = "type")]
     pub component_type: ComponentType,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_id: Option<Cow<'a, str>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub disabled: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub style: Option<ButtonStyle>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub label: Option<Cow<'a, str>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub emoji: Option<Emoji<'a>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub url: Option<Cow<'a, str>>,
-    pub options: Vec<SelectOption<'a>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub options: Option<Vec<SelectOption<'a>>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub placeholder: Option<Cow<'a, str>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub min_values: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub max_values: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub components: Option<Vec<Component<'a>>>,
 }
 
@@ -92,6 +103,12 @@ pub enum ComponentType {
     ActionRow = 1,
     Button = 2,
     SelectMenu = 3,
+}
+
+impl Default for ComponentType {
+    fn default() -> Self {
+        Self::ActionRow
+    }
 }
 
 #[derive(Debug, PartialEq, Serialize_repr, Deserialize_repr)]
@@ -108,8 +125,11 @@ pub enum ButtonStyle {
 pub struct SelectOption<'a> {
     pub label: Cow<'a, str>,
     pub value: Cow<'a, str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<Cow<'a, str>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub emoji: Option<Emoji<'a>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub default: Option<bool>,
 }
 
