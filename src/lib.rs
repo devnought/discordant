@@ -1,6 +1,5 @@
-use std::{borrow::Cow, collections::HashMap, convert::TryInto, num::ParseIntError};
-
-use sodiumoxide::crypto::sign::{self, PublicKey, Signature};
+use ed25519_dalek::{PublicKey, Signature, Verifier};
+use std::{borrow::Cow, collections::HashMap, num::ParseIntError};
 
 mod application_command;
 pub use application_command::*;
@@ -39,7 +38,7 @@ pub type Snowflake<'a> = Cow<'a, str>;
 
 pub enum VerifyError {
     PublicKeyDecode,
-    PublicKeyArray,
+    PublicKeyFromBytes,
     SignatureDecode,
     SignatureFromBytes,
 }
@@ -61,26 +60,23 @@ pub fn verify_signature(
         format!("{}{}", timestamp, body)
     };
 
-    let signature_type = {
+    let signature = {
         let signature = headers.get(ED25519).unwrap();
         let signature_vec = decode_hex(signature).map_err(|_| VerifyError::SignatureDecode)?;
 
         Signature::from_bytes(&signature_vec).map_err(|_| VerifyError::SignatureFromBytes)?
     };
 
-    let public_key_type = {
+    let public_key = {
         let public_key_vec = decode_hex(discord_key).map_err(|_| VerifyError::PublicKeyDecode)?;
-        let public_key_array = public_key_vec
-            .try_into()
-            .map_err(|_| VerifyError::PublicKeyArray)?;
-        PublicKey(public_key_array)
+
+        PublicKey::from_bytes(&public_key_vec).map_err(|_| VerifyError::PublicKeyFromBytes)?
     };
 
-    Ok(sign::verify_detached(
-        &signature_type,
-        timestamp_body.as_bytes(),
-        &public_key_type,
-    ))
+    match public_key.verify(timestamp_body.as_bytes(), &signature) {
+        Ok(_) => Ok(true),
+        Err(_) => Ok(false),
+    }
 }
 
 fn decode_hex(s: &str) -> Result<Vec<u8>, ParseIntError> {

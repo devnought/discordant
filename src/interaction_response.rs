@@ -21,6 +21,7 @@ pub enum InteractionCallbackType {
     DeferredChannelMessageWithSource = 5,
     DeferredUpdateMessage = 6,
     UpdateMessage = 7,
+    ApplicationCommandAutocompleteResult = 8,
 }
 
 #[derive(Debug, Default, Serialize)]
