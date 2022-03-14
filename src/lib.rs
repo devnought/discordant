@@ -1,5 +1,6 @@
-use ed25519_dalek::{PublicKey, Signature, Verifier};
 use std::{borrow::Cow, collections::HashMap, num::ParseIntError};
+
+use ed25519_dalek::{PublicKey, Signature, Verifier};
 
 mod application_command;
 pub use application_command::*;
@@ -76,6 +77,13 @@ pub fn verify_signature(
     match public_key.verify(timestamp_body.as_bytes(), &signature) {
         Ok(_) => Ok(true),
         Err(_) => Ok(false),
+    }
+}
+
+pub fn pong() -> InteractionResponse<'static> {
+    InteractionResponse {
+        response_type: InteractionCallbackType::Pong,
+        data: None,
     }
 }
 
