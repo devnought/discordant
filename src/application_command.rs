@@ -91,6 +91,7 @@ pub struct ApplicationCommandOptionChoice<'a> {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum ApplicationCommandOptionChoiceValue<'a> {
     String(Cow<'a, str>),
     Integer(i64),
