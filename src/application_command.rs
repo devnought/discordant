@@ -27,7 +27,7 @@ pub struct ApplicationCommand<'a> {
     pub version: Option<Snowflake<'a>>,
 }
 
-#[derive(Debug, PartialEq, Serialize_repr, Deserialize_repr)]
+#[derive(Debug, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum ApplicationCommandType {
     ChatInput = 1,
@@ -63,7 +63,7 @@ pub struct ApplicationCommandOption<'a> {
     pub autocomplete: Option<bool>,
 }
 
-#[derive(Debug, PartialEq, Serialize_repr, Deserialize_repr)]
+#[derive(Debug, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum ApplicationCommandOptionType {
     SubCommand = 1,

@@ -39,7 +39,7 @@ pub struct Channel<'a> {
     pub permissions: Option<Cow<'a, str>>,
 }
 
-#[derive(Debug, PartialEq, Serialize_repr, Deserialize_repr)]
+#[derive(Debug, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum ChannelType {
     GuildText = 0,
@@ -64,7 +64,7 @@ pub struct Overwrite<'a> {
     pub deny: Cow<'a, str>,
 }
 
-#[derive(Debug, PartialEq, Deserialize_repr)]
+#[derive(Debug, Eq, PartialEq, Deserialize_repr)]
 #[repr(u8)]
 pub enum OverwriteType {
     Role = 0,
@@ -240,7 +240,7 @@ pub enum Nonce<'a> {
     String(Cow<'a, str>),
 }
 
-#[derive(Debug, PartialEq, Deserialize_repr)]
+#[derive(Debug, Eq, PartialEq, Deserialize_repr)]
 #[repr(u8)]
 pub enum MessageType {
     Default = 0,
@@ -275,7 +275,7 @@ pub struct MessageActivity<'a> {
     pub party_id: Option<Cow<'a, str>>,
 }
 
-#[derive(Debug, PartialEq, Deserialize_repr)]
+#[derive(Debug, Eq, PartialEq, Deserialize_repr)]
 #[repr(u8)]
 pub enum MessageActivityType {
     Join = 1,

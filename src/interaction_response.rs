@@ -13,7 +13,7 @@ pub struct InteractionResponse<'a> {
     pub data: Option<InteractionCallbackData<'a>>,
 }
 
-#[derive(Debug, PartialEq, Serialize_repr)]
+#[derive(Debug, Eq, PartialEq, Serialize_repr)]
 #[repr(u8)]
 pub enum InteractionCallbackType {
     Pong = 1,
@@ -40,7 +40,7 @@ pub struct InteractionCallbackData<'a> {
     pub components: Option<Vec<Component<'a>>>,
 }
 
-#[derive(Debug, PartialEq, Serialize_repr)]
+#[derive(Debug, Eq, PartialEq, Serialize_repr)]
 #[repr(u8)]
 pub enum InteractionCallbackDataFlags {
     /// Only the user that sent the interaction will see the response

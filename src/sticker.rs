@@ -12,7 +12,7 @@ pub struct StickerItem<'a> {
     pub format_type: StickerFormat,
 }
 
-#[derive(Debug, PartialEq, Deserialize_repr)]
+#[derive(Debug, Eq, PartialEq, Deserialize_repr)]
 #[repr(u8)]
 pub enum StickerFormat {
     Png = 1,
@@ -37,7 +37,7 @@ pub struct Sticker<'a> {
     pub sort_value: Option<u64>,
 }
 
-#[derive(Debug, PartialEq, Deserialize_repr)]
+#[derive(Debug, Eq, PartialEq, Deserialize_repr)]
 #[repr(u8)]
 pub enum StickerType {
     Standard = 1,

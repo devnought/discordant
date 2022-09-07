@@ -21,7 +21,7 @@ pub struct Interaction<'a> {
     pub message: Option<Message<'a>>,
 }
 
-#[derive(Debug, PartialEq, Deserialize_repr)]
+#[derive(Debug, Eq, PartialEq, Deserialize_repr)]
 #[repr(u8)]
 pub enum InteractionType {
     Ping = 1,
@@ -43,7 +43,7 @@ pub struct InteractionData<'a> {
     pub target_id: Option<Snowflake<'a>>,
 }
 
-#[derive(Debug, PartialEq, Deserialize_repr)]
+#[derive(Debug, Eq, PartialEq, Deserialize_repr)]
 #[repr(u8)]
 pub enum ApplicationCommandType {
     ChatInput = 1,
@@ -97,7 +97,7 @@ pub struct Component<'a> {
     pub components: Option<Vec<Component<'a>>>,
 }
 
-#[derive(Debug, PartialEq, Serialize_repr, Deserialize_repr)]
+#[derive(Debug, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum ComponentType {
     ActionRow = 1,
@@ -111,7 +111,7 @@ impl Default for ComponentType {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize_repr, Deserialize_repr)]
+#[derive(Debug, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum ButtonStyle {
     Primary = 1,
