@@ -136,6 +136,8 @@ pub struct ChannelMention<'a> {
 pub struct Attachment<'a> {
     pub id: Snowflake<'a>,
     pub filename: Cow<'a, str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<Cow<'a, str>>,
     pub content_type: Option<Cow<'a, str>>,
     pub size: u64,
     pub url: Cow<'a, str>,
@@ -147,19 +149,31 @@ pub struct Attachment<'a> {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Embed<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub title: Option<Cow<'a, str>>,
-    #[serde(rename = "type")]
+    #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub embed_type: Option<EmbedType>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<Cow<'a, str>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub url: Option<Cow<'a, str>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<Cow<'a, str>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub color: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub footer: Option<EmbedFooter<'a>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub image: Option<EmbedImage<'a>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub thumbnail: Option<EmbedThumbnail<'a>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub video: Option<EmbedVideo<'a>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub provider: Option<EmbedProvider<'a>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub author: Option<EmbedAuthor<'a>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub fields: Option<Vec<EmbedField<'a>>>,
 }
 
@@ -177,45 +191,62 @@ pub enum EmbedType {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EmbedFooter<'a> {
     pub text: Cow<'a, str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub icon_url: Option<Cow<'a, str>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub proxy_icon_url: Option<Cow<'a, str>>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EmbedImage<'a> {
     pub url: Cow<'a, str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub proxy_url: Option<Cow<'a, str>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub height: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub width: Option<u64>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EmbedThumbnail<'a> {
     pub url: Cow<'a, str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub proxy_url: Option<Cow<'a, str>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub height: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub width: Option<u64>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EmbedVideo<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub url: Option<Cow<'a, str>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub proxy_url: Option<Cow<'a, str>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub height: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub width: Option<u64>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EmbedProvider<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<Cow<'a, str>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub url: Option<Cow<'a, str>>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EmbedAuthor<'a> {
     pub name: Cow<'a, str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub url: Option<Cow<'a, str>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub icon_url: Option<Cow<'a, str>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub proxy_icon_url: Option<Cow<'a, str>>,
 }
 
@@ -223,6 +254,7 @@ pub struct EmbedAuthor<'a> {
 pub struct EmbedField<'a> {
     pub name: Cow<'a, str>,
     pub value: Cow<'a, str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub inline: Option<bool>,
 }
 

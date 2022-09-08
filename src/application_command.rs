@@ -47,7 +47,11 @@ pub struct ApplicationCommandOption<'a> {
     #[serde(rename = "type")]
     pub application_command_option_type: ApplicationCommandOptionType,
     pub name: Cow<'a, str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name_localizations: Option<HashMap<String, String>>,
     pub description: Cow<'a, str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description_localizations: Option<HashMap<String, String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub required: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -60,6 +64,10 @@ pub struct ApplicationCommandOption<'a> {
     pub min_value: Option<MinMaxValue>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub max_value: Option<MinMaxValue>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub min_length: Option<i64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub max_length: Option<i64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub autocomplete: Option<bool>,
 }
@@ -78,6 +86,7 @@ pub enum ApplicationCommandOptionType {
     Role = 8,
     Mentionable = 9,
     Number = 10,
+    Attachment = 11,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
