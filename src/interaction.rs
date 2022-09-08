@@ -19,6 +19,9 @@ pub struct Interaction<'a> {
     pub token: Cow<'a, str>,
     pub version: u64,
     pub message: Option<Message<'a>>,
+    pub app_permissions: Option<Cow<'a, str>>,
+    pub locale: Option<Cow<'a, str>>,
+    pub guild_locale: Option<Cow<'a, str>>,
 }
 
 #[derive(Debug, Eq, PartialEq, Deserialize_repr)]
@@ -27,6 +30,8 @@ pub enum InteractionType {
     Ping = 1,
     ApplicationCommand = 2,
     MessageComponent = 3,
+    ApplicationCommandAutocomplete = 4,
+    ModalSubmit = 5,
 }
 
 #[derive(Debug, Deserialize)]
