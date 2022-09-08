@@ -1,4 +1,4 @@
-use std::borrow::Cow;
+use std::{borrow::Cow, collections::HashMap};
 
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
@@ -18,27 +18,28 @@ pub struct ApplicationCommand<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub guild_id: Option<Snowflake<'a>>,
     pub name: Cow<'a, str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name_localizations: Option<HashMap<String, String>>,
     pub description: Cow<'a, str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description_localizations: Option<HashMap<String, String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub options: Option<Vec<ApplicationCommandOption<'a>>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub default_permission: Option<bool>,
+    pub default_member_permissions: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub dm_permission: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub version: Option<Snowflake<'a>>,
 }
 
-#[derive(Debug, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
+#[derive(Debug, Default, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum ApplicationCommandType {
+    #[default]
     ChatInput = 1,
     User = 2,
     Message = 3,
-}
-
-impl Default for ApplicationCommandType {
-    fn default() -> Self {
-        Self::ChatInput
-    }
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
@@ -63,9 +64,10 @@ pub struct ApplicationCommandOption<'a> {
     pub autocomplete: Option<bool>,
 }
 
-#[derive(Debug, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
+#[derive(Debug, Default, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum ApplicationCommandOptionType {
+    #[default]
     SubCommand = 1,
     SubCommandGroup = 2,
     String = 3,
@@ -76,12 +78,6 @@ pub enum ApplicationCommandOptionType {
     Role = 8,
     Mentionable = 9,
     Number = 10,
-}
-
-impl Default for ApplicationCommandOptionType {
-    fn default() -> Self {
-        Self::SubCommand
-    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]

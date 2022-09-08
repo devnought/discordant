@@ -97,18 +97,13 @@ pub struct Component<'a> {
     pub components: Option<Vec<Component<'a>>>,
 }
 
-#[derive(Debug, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
+#[derive(Debug, Default, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum ComponentType {
+    #[default]
     ActionRow = 1,
     Button = 2,
     SelectMenu = 3,
-}
-
-impl Default for ComponentType {
-    fn default() -> Self {
-        Self::ActionRow
-    }
 }
 
 #[derive(Debug, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
