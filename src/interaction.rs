@@ -41,10 +41,12 @@ pub struct InteractionData<'a> {
     #[serde(rename = "type")]
     pub data_type: Option<ApplicationCommandType>,
     pub resolved: Option<ResolvedData<'a>>,
-    pub options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
+    #[serde(default)]
+    pub options: Vec<ApplicationCommandInteractionDataOption<'a>>,
     pub custom_id: Option<Cow<'a, str>>,
     pub component_type: Option<ComponentType>,
-    pub values: Option<Vec<SelectOption<'a>>>,
+    #[serde(default)]
+    pub values: Vec<SelectOption<'a>>,
     pub target_id: Option<Snowflake<'a>>,
 }
 
@@ -90,16 +92,16 @@ pub struct Component<'a> {
     pub emoji: Option<Emoji<'a>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub url: Option<Cow<'a, str>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub options: Option<Vec<SelectOption<'a>>>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub options: Vec<SelectOption<'a>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub placeholder: Option<Cow<'a, str>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub min_values: Option<u64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub max_values: Option<u64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub components: Option<Vec<Component<'a>>>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub components: Vec<Component<'a>>,
 }
 
 #[derive(Debug, Default, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
@@ -139,31 +141,32 @@ pub enum ApplicationCommandInteractionDataOption<'a> {
     // #[serde(rename = 1)]
     SubCommand {
         name: Cow<'a, str>,
-        options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
+        options: Vec<ApplicationCommandInteractionDataOption<'a>>,
+    },
+    // #[serde(rename = 2)]
+    SubCommandGroup {
+        name: Cow<'a, str>,
+        options: Vec<ApplicationCommandInteractionDataOption<'a>>,
     },
     // #[serde(rename = 3)]
     String {
         name: Cow<'a, str>,
         value: Option<Cow<'a, str>>,
-        options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
     },
     // #[serde(rename = 4)]
     Integer {
         name: Cow<'a, str>,
         value: Option<i64>,
-        options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
     },
     // #[serde(rename = 5)]
     Boolean {
         name: Cow<'a, str>,
         value: Option<bool>,
-        options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
     },
     // #[serde(rename = 6)]
     User {
         name: Cow<'a, str>,
         value: Option<Cow<'a, str>>,
-        options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
     },
     // #[serde(rename = 7)]
     Channel(Box<ChannelVariant<'a>>),
@@ -171,20 +174,22 @@ pub enum ApplicationCommandInteractionDataOption<'a> {
     Role {
         name: Cow<'a, str>,
         value: Option<Cow<'a, str>>,
-        options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
     },
     // #[serde(rename = 9)]
     // Mentionable {
     //     name: Cow<'a, str>,
     //     value: Option<Mentionable>,
-    //     options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
     // },
     // #[serde(rename = 10)]
     Number {
         name: Cow<'a, str>,
         value: Option<f64>,
-        options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
     },
+    // #[serde(rename = 11)]
+    // Attachment {
+    //     name: Cow<'a, str>,
+    //     value: Option<Mentionable>,
+    // },
 }
 
 impl<'a> Display for ApplicationCommandInteractionDataOption<'a> {
@@ -208,7 +213,8 @@ impl<'a> Display for ApplicationCommandInteractionDataOption<'a> {
 pub struct ChannelVariant<'a> {
     pub name: Cow<'a, str>,
     pub value: Option<Channel<'a>>,
-    pub options: Option<Vec<ApplicationCommandInteractionDataOption<'a>>>,
+    #[serde(default)]
+    pub options: Vec<ApplicationCommandInteractionDataOption<'a>>,
 }
 
 impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandInteractionDataOption<'a> {
@@ -246,9 +252,9 @@ impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandInteractionDataOptio
                     new_options.push(new_item);
                 }
 
-                Some(new_options)
+                new_options
             } else {
-                None
+                Vec::with_capacity(0)
             }
         };
 
@@ -258,24 +264,20 @@ impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandInteractionDataOptio
             1 => ApplicationCommandInteractionDataOption::SubCommand { name, options },
             3 => ApplicationCommandInteractionDataOption::String {
                 name,
-                options,
                 value: value_raw
                     .and_then(Value::as_str)
                     .map(|x| x.to_string().into()),
             },
             4 => ApplicationCommandInteractionDataOption::Integer {
                 name,
-                options,
                 value: value_raw.and_then(Value::as_i64),
             },
             5 => ApplicationCommandInteractionDataOption::Boolean {
                 name,
-                options,
                 value: value_raw.and_then(Value::as_bool),
             },
             6 => ApplicationCommandInteractionDataOption::User {
                 name,
-                options,
                 value: value_raw
                     .and_then(Value::as_str)
                     .map(|x| x.to_string().into()),
@@ -293,14 +295,12 @@ impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandInteractionDataOptio
             })),
             8 => ApplicationCommandInteractionDataOption::Role {
                 name,
-                options,
                 value: value_raw
                     .and_then(Value::as_str)
                     .map(|x| x.to_string().into()),
             },
             10 => ApplicationCommandInteractionDataOption::Number {
                 name,
-                options,
                 value: value_raw.and_then(Value::as_f64),
             },
             type_ => panic!("unsupported type {:?}", type_),

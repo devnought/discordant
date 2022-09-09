@@ -10,7 +10,8 @@ pub struct Application<'a> {
     pub name: Cow<'a, str>,
     pub icon: Option<Cow<'a, str>>,
     pub description: Cow<'a, str>,
-    pub rpc_origins: Option<Vec<Cow<'a, str>>>,
+    #[serde(default)]
+    pub rpc_origins: Vec<Cow<'a, str>>,
     pub bot_public: bool,
     pub bot_require_code_grant: bool,
     pub terms_of_service_url: Option<Cow<'a, str>>,

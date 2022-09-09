@@ -12,7 +12,7 @@ pub struct ApplicationCommand<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<Snowflake<'a>>,
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
-    pub application_command_type: Option<ApplicationCommandType>,
+    pub application_command_type: Option<ApplicationCommandTypeDef>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub application_id: Option<Snowflake<'a>>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -23,8 +23,8 @@ pub struct ApplicationCommand<'a> {
     pub description: Cow<'a, str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description_localizations: Option<HashMap<String, String>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub options: Option<Vec<ApplicationCommandOption<'a>>>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub options: Vec<ApplicationCommandOption<'a>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub default_member_permissions: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -35,7 +35,7 @@ pub struct ApplicationCommand<'a> {
 
 #[derive(Debug, Default, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
-pub enum ApplicationCommandType {
+pub enum ApplicationCommandTypeDef {
     #[default]
     ChatInput = 1,
     User = 2,
@@ -54,12 +54,12 @@ pub struct ApplicationCommandOption<'a> {
     pub description_localizations: Option<HashMap<String, String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub required: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub choices: Option<Vec<ApplicationCommandOptionChoice<'a>>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub options: Option<Vec<ApplicationCommandOption<'a>>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub channel_type: Option<Vec<ChannelType>>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub choices: Vec<ApplicationCommandOptionChoice<'a>>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub options: Vec<ApplicationCommandOption<'a>>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub channel_type: Vec<ChannelType>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub min_value: Option<MinMaxValue>,
     #[serde(skip_serializing_if = "Option::is_none")]

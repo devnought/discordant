@@ -27,6 +27,7 @@ mod permission;
 pub use permission::*;
 
 mod sticker;
+use serde::{Deserialize, Serialize};
 pub use sticker::*;
 
 mod team;
@@ -35,7 +36,16 @@ pub use team::*;
 mod user;
 pub use user::*;
 
-pub type Snowflake<'a> = Cow<'a, str>;
+#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Hash)]
+pub struct Snowflake<'a>(Cow<'a, str>);
+
+impl<'a> Snowflake<'a> {
+    pub fn timestamp(&self) -> i64 {
+        let value = self.0.parse::<i64>().unwrap();
+
+        (value >> 22) + 1420070400000
+    }
+}
 
 pub enum VerifyError {
     PublicKeyDecode,

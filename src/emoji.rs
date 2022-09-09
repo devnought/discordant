@@ -10,8 +10,8 @@ pub struct Emoji<'a> {
     pub id: Option<Snowflake<'a>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<Cow<'a, str>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub roles: Option<Vec<Role<'a>>>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub roles: Vec<Role<'a>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub user: Option<User<'a>>,
     #[serde(skip_serializing_if = "Option::is_none")]

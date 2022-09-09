@@ -15,7 +15,8 @@ pub struct Channel<'a> {
     pub channel_type: ChannelType,
     pub guild_id: Option<Snowflake<'a>>,
     pub position: Option<u64>,
-    pub permission_overwrites: Option<Vec<Overwrite<'a>>>,
+    #[serde(default)]
+    pub permission_overwrites: Vec<Overwrite<'a>>,
     pub name: Option<Cow<'a, str>>,
     pub topic: Option<Cow<'a, str>>,
     pub nsfw: Option<bool>,
@@ -23,7 +24,8 @@ pub struct Channel<'a> {
     pub bitrate: Option<u64>,
     pub user_limit: Option<u64>,
     pub rate_limit_per_user: Option<u64>,
-    pub recipients: Option<Vec<User<'a>>>,
+    #[serde(default)]
+    pub recipients: Vec<User<'a>>,
     pub icon: Option<Cow<'a, str>>,
     pub owner_id: Option<Snowflake<'a>>,
     pub applicaiton_id: Option<Snowflake<'a>>,
@@ -102,10 +104,12 @@ pub struct Message<'a> {
     pub mention_everyone: bool,
     pub mentions: Vec<User<'a>>,
     pub mention_roles: Vec<Role<'a>>,
-    pub mention_channels: Option<Vec<ChannelMention<'a>>>,
+    #[serde(default)]
+    pub mention_channels: Vec<ChannelMention<'a>>,
     pub attachments: Vec<Attachment<'a>>,
     pub embeds: Vec<Embed<'a>>,
-    pub reactions: Option<Vec<Reaction<'a>>>,
+    #[serde(default)]
+    pub reactions: Vec<Reaction<'a>>,
     pub nonce: Option<Nonce<'a>>,
     pub pinned: bool,
     pub webhook_id: Option<Snowflake<'a>>,
@@ -119,9 +123,12 @@ pub struct Message<'a> {
     pub referenced_message: Option<Box<Message<'a>>>,
     pub interaction: Option<MessageInteraction<'a>>,
     pub thread: Option<Channel<'a>>,
-    pub components: Option<Vec<Component<'a>>>,
-    pub sticker_items: Option<Vec<StickerItem<'a>>>,
-    pub stickers: Option<Vec<Sticker<'a>>>,
+    #[serde(default)]
+    pub components: Vec<Component<'a>>,
+    #[serde(default)]
+    pub sticker_items: Vec<StickerItem<'a>>,
+    #[serde(default)]
+    pub stickers: Vec<Sticker<'a>>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -132,18 +139,22 @@ pub struct ChannelMention<'a> {
     pub name: Cow<'a, str>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Attachment<'a> {
     pub id: Snowflake<'a>,
     pub filename: Cow<'a, str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<Cow<'a, str>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub content_type: Option<Cow<'a, str>>,
     pub size: u64,
     pub url: Cow<'a, str>,
     pub proxy_url: Cow<'a, str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub height: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub width: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ephemeral: Option<bool>,
 }
 
@@ -173,8 +184,8 @@ pub struct Embed<'a> {
     pub provider: Option<EmbedProvider<'a>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub author: Option<EmbedAuthor<'a>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub fields: Option<Vec<EmbedField<'a>>>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub fields: Vec<EmbedField<'a>>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
