@@ -10,13 +10,13 @@ use super::Snowflake;
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct ApplicationCommand<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub id: Option<Snowflake<'a>>,
+    pub id: Option<Snowflake>,
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub application_command_type: Option<ApplicationCommandTypeDef>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub application_id: Option<Snowflake<'a>>,
+    pub application_id: Option<Snowflake>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub guild_id: Option<Snowflake<'a>>,
+    pub guild_id: Option<Snowflake>,
     pub name: Cow<'a, str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name_localizations: Option<HashMap<String, String>>,
@@ -30,7 +30,7 @@ pub struct ApplicationCommand<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub dm_permission: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub version: Option<Snowflake<'a>>,
+    pub version: Option<Snowflake>,
 }
 
 #[derive(Debug, Default, Eq, PartialEq, Serialize_repr, Deserialize_repr)]

@@ -7,13 +7,13 @@ use super::{Channel, Emoji, GuildMember, Message, Role, Snowflake, User};
 
 #[derive(Debug, Deserialize)]
 pub struct Interaction<'a> {
-    pub id: Snowflake<'a>,
-    pub application_id: Snowflake<'a>,
+    pub id: Snowflake,
+    pub application_id: Snowflake,
     #[serde(rename = "type")]
     pub interaction_type: InteractionType,
     pub data: Option<InteractionData<'a>>,
-    pub guild_id: Option<Snowflake<'a>>,
-    pub channel_id: Option<Snowflake<'a>>,
+    pub guild_id: Option<Snowflake>,
+    pub channel_id: Option<Snowflake>,
     pub member: Option<GuildMember<'a>>,
     pub user: Option<User<'a>>,
     pub token: Cow<'a, str>,
@@ -36,7 +36,7 @@ pub enum InteractionType {
 
 #[derive(Debug, Deserialize)]
 pub struct InteractionData<'a> {
-    pub id: Option<Snowflake<'a>>,
+    pub id: Option<Snowflake>,
     pub name: Option<Cow<'a, str>>,
     #[serde(rename = "type")]
     pub data_type: Option<ApplicationCommandType>,
@@ -47,7 +47,7 @@ pub struct InteractionData<'a> {
     pub component_type: Option<ComponentType>,
     #[serde(default)]
     pub values: Vec<SelectOption<'a>>,
-    pub target_id: Option<Snowflake<'a>>,
+    pub target_id: Option<Snowflake>,
 }
 
 #[derive(Debug, Eq, PartialEq, Deserialize_repr)]
@@ -60,16 +60,16 @@ pub enum ApplicationCommandType {
 
 #[derive(Debug, Deserialize)]
 pub struct ResolvedData<'a> {
-    pub users: Option<HashMap<Snowflake<'a>, User<'a>>>,
-    pub members: Option<HashMap<Snowflake<'a>, GuildMember<'a>>>,
-    pub roles: Option<HashMap<Snowflake<'a>, Role<'a>>>,
-    pub channels: Option<HashMap<Snowflake<'a>, Channel<'a>>>,
-    pub messages: Option<HashMap<Snowflake<'a>, Message<'a>>>,
+    pub users: Option<HashMap<Snowflake, User<'a>>>,
+    pub members: Option<HashMap<Snowflake, GuildMember<'a>>>,
+    pub roles: Option<HashMap<Snowflake, Role<'a>>>,
+    pub channels: Option<HashMap<Snowflake, Channel<'a>>>,
+    pub messages: Option<HashMap<Snowflake, Message<'a>>>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct MessageInteraction<'a> {
-    pub id: Snowflake<'a>,
+    pub id: Snowflake,
     #[serde(rename = "type")]
     pub message_interaction_type: InteractionType,
     pub name: Cow<'a, str>,

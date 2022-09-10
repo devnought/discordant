@@ -6,7 +6,7 @@ use super::Snowflake;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Role<'a> {
-    pub id: Snowflake<'a>,
+    pub id: Snowflake,
     pub name: Cow<'a, str>,
     pub color: u64,
     pub hoist: bool,
@@ -14,12 +14,12 @@ pub struct Role<'a> {
     pub permissions: Cow<'a, str>,
     pub managed: bool,
     pub mentionable: bool,
-    pub tags: Option<RoleTags<'a>>,
+    pub tags: Option<RoleTags>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct RoleTags<'a> {
-    pub bot_id: Option<Snowflake<'a>>,
-    pub integration_id: Option<Snowflake<'a>>,
+pub struct RoleTags {
+    pub bot_id: Option<Snowflake>,
+    pub integration_id: Option<Snowflake>,
     pub premium_subscriber: Option<()>,
 }

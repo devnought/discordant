@@ -7,7 +7,7 @@ use super::{Role, Snowflake, User};
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct Emoji<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub id: Option<Snowflake<'a>>,
+    pub id: Option<Snowflake>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<Cow<'a, str>>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]

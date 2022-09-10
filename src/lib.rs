@@ -1,4 +1,4 @@
-use std::{borrow::Cow, collections::HashMap, num::ParseIntError};
+use std::{collections::HashMap, num::ParseIntError};
 
 use ed25519_dalek::{PublicKey, Signature, Verifier};
 
@@ -27,7 +27,7 @@ mod permission;
 pub use permission::*;
 
 mod sticker;
-use serde::{Deserialize, Serialize};
+use serde::{de::Visitor, Deserialize, Serialize};
 pub use sticker::*;
 
 mod team;
@@ -36,14 +36,55 @@ pub use team::*;
 mod user;
 pub use user::*;
 
-#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Hash)]
-pub struct Snowflake<'a>(Cow<'a, str>);
+#[derive(Debug, Eq, PartialEq, Hash)]
+pub struct Snowflake(u64);
 
-impl<'a> Snowflake<'a> {
+impl Snowflake {
     pub fn timestamp(&self) -> i64 {
-        let value = self.0.parse::<i64>().unwrap();
+        (self.0 as i64 >> 22) + 1420070400000
+    }
 
-        (value >> 22) + 1420070400000
+    pub fn to_string(&self) -> String {
+        self.0.to_string()
+    }
+}
+
+struct SnowflakeVisitor;
+
+impl<'de> Visitor<'de> for SnowflakeVisitor {
+    type Value = Snowflake;
+
+    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+        formatter.write_str("a str to convert to a i64")
+    }
+
+    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+    where
+        E: serde::de::Error,
+    {
+        let value = v
+            .parse::<u64>()
+            .map_err(|e| E::custom(format!("Could not parse `{v}`: {}", e)))?;
+
+        Ok(Snowflake(value))
+    }
+}
+
+impl Serialize for Snowflake {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_newtype_struct("Snowflake", &self.0.to_string())
+    }
+}
+
+impl<'de> Deserialize<'de> for Snowflake {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        deserializer.deserialize_str(SnowflakeVisitor)
     }
 }
 

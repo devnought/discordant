@@ -6,7 +6,7 @@ use super::Snowflake;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct User<'a> {
-    pub id: Snowflake<'a>,
+    pub id: Snowflake,
     pub username: Cow<'a, str>,
     pub discriminator: Cow<'a, str>,
     pub avatar: Option<Cow<'a, str>>,

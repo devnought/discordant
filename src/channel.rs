@@ -10,26 +10,26 @@ use super::{
 
 #[derive(Debug, Deserialize)]
 pub struct Channel<'a> {
-    pub id: Snowflake<'a>,
+    pub id: Snowflake,
     #[serde(rename = "type")]
     pub channel_type: ChannelType,
-    pub guild_id: Option<Snowflake<'a>>,
+    pub guild_id: Option<Snowflake>,
     pub position: Option<u64>,
     #[serde(default)]
     pub permission_overwrites: Vec<Overwrite<'a>>,
     pub name: Option<Cow<'a, str>>,
     pub topic: Option<Cow<'a, str>>,
     pub nsfw: Option<bool>,
-    pub last_message_id: Option<Snowflake<'a>>,
+    pub last_message_id: Option<Snowflake>,
     pub bitrate: Option<u64>,
     pub user_limit: Option<u64>,
     pub rate_limit_per_user: Option<u64>,
     #[serde(default)]
     pub recipients: Vec<User<'a>>,
     pub icon: Option<Cow<'a, str>>,
-    pub owner_id: Option<Snowflake<'a>>,
-    pub applicaiton_id: Option<Snowflake<'a>>,
-    pub parent_id: Option<Snowflake<'a>>,
+    pub owner_id: Option<Snowflake>,
+    pub applicaiton_id: Option<Snowflake>,
+    pub parent_id: Option<Snowflake>,
     pub last_pin_timestamp: Option<Cow<'a, str>>,
     pub rtc_region: Option<Cow<'a, str>>,
     pub video_quality_mode: Option<u64>,
@@ -59,7 +59,7 @@ pub enum ChannelType {
 
 #[derive(Debug, Deserialize)]
 pub struct Overwrite<'a> {
-    pub id: Snowflake<'a>,
+    pub id: Snowflake,
     #[serde(rename = "type")]
     pub overwrite_type: OverwriteType,
     pub allow: Cow<'a, str>,
@@ -84,17 +84,17 @@ pub struct ThreadMetadata<'a> {
 
 #[derive(Debug, Deserialize)]
 pub struct ThreadMember<'a> {
-    pub id: Option<Snowflake<'a>>,
-    pub user_id: Option<Snowflake<'a>>,
+    pub id: Option<Snowflake>,
+    pub user_id: Option<Snowflake>,
     pub join_timestamp: Cow<'a, str>,
     pub flags: u64,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Message<'a> {
-    pub id: Snowflake<'a>,
-    pub channel_id: Snowflake<'a>,
-    pub guild_id: Option<Snowflake<'a>>,
+    pub id: Snowflake,
+    pub channel_id: Snowflake,
+    pub guild_id: Option<Snowflake>,
     pub author: User<'a>,
     pub member: Option<GuildMember<'a>>,
     pub content: Cow<'a, str>,
@@ -112,13 +112,13 @@ pub struct Message<'a> {
     pub reactions: Vec<Reaction<'a>>,
     pub nonce: Option<Nonce<'a>>,
     pub pinned: bool,
-    pub webhook_id: Option<Snowflake<'a>>,
+    pub webhook_id: Option<Snowflake>,
     #[serde(rename = "type")]
     pub message_type: MessageType,
     pub activity: Option<MessageActivity<'a>>,
     pub application: Option<Application<'a>>,
-    pub application_id: Option<Snowflake<'a>>,
-    pub message_reference: Option<MessageReference<'a>>,
+    pub application_id: Option<Snowflake>,
+    pub message_reference: Option<MessageReference>,
     pub flags: Option<u64>,
     pub referenced_message: Option<Box<Message<'a>>>,
     pub interaction: Option<MessageInteraction<'a>>,
@@ -133,15 +133,15 @@ pub struct Message<'a> {
 
 #[derive(Debug, Deserialize)]
 pub struct ChannelMention<'a> {
-    pub id: Snowflake<'a>,
-    pub guild_id: Snowflake<'a>,
+    pub id: Snowflake,
+    pub guild_id: Snowflake,
     pub channel_mention_type: ChannelType,
     pub name: Cow<'a, str>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Attachment<'a> {
-    pub id: Snowflake<'a>,
+    pub id: Snowflake,
     pub filename: Cow<'a, str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<Cow<'a, str>>,
@@ -328,17 +328,17 @@ pub enum MessageActivityType {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct MessageReference<'a> {
-    pub message_id: Option<Snowflake<'a>>,
-    pub channel_id: Option<Snowflake<'a>>,
-    pub guild_id: Option<Snowflake<'a>>,
+pub struct MessageReference {
+    pub message_id: Option<Snowflake>,
+    pub channel_id: Option<Snowflake>,
+    pub guild_id: Option<Snowflake>,
     pub fail_if_not_exists: Option<bool>,
 }
 
 #[derive(Debug, Serialize)]
 pub struct AllowedMentions<'a> {
     pub parse: Vec<Cow<'a, str>>,
-    pub roles: Vec<Snowflake<'a>>,
-    pub users: Vec<Snowflake<'a>>,
+    pub roles: Vec<Snowflake>,
+    pub users: Vec<Snowflake>,
     pub replied_user: bool,
 }
