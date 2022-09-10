@@ -1,4 +1,4 @@
-use std::{collections::HashMap, num::ParseIntError};
+use std::{collections::HashMap, fmt::Display, num::ParseIntError};
 
 use ed25519_dalek::{PublicKey, Signature, Verifier};
 
@@ -46,6 +46,19 @@ impl Snowflake {
 
     pub fn to_string(&self) -> String {
         self.0.to_string()
+    }
+}
+
+impl Display for Snowflake {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+impl From<&str> for Snowflake {
+    fn from(s: &str) -> Self {
+        let value = s.parse().unwrap();
+        Self(value)
     }
 }
 
