@@ -36,7 +36,7 @@ pub use team::*;
 mod user;
 pub use user::*;
 
-#[derive(Debug, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
 pub struct Snowflake(u64);
 
 impl Snowflake {
