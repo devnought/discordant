@@ -199,7 +199,7 @@ pub enum EmbedType {
     Link,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct EmbedFooter<'a> {
     pub text: Cow<'a, str>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -219,7 +219,7 @@ pub struct EmbedImage<'a> {
     pub width: Option<u64>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct EmbedThumbnail<'a> {
     pub url: Cow<'a, str>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -250,7 +250,7 @@ pub struct EmbedProvider<'a> {
     pub url: Option<Cow<'a, str>>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct EmbedAuthor<'a> {
     pub name: Cow<'a, str>,
     #[serde(skip_serializing_if = "Option::is_none")]
