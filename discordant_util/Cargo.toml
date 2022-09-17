@@ -1,0 +1,16 @@
+[package]
+name = "discordant_util"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+discordant_types = { path = "../discordant_types" }
+
+async-trait = "0.1.57"
+ed25519-dalek = "1.0.1"
+http = "0.2.8"
+log = "0.4.17"
+serde = { version = "1.0.144 ", features = ["derive"] }
+serde_json = "1.0.85"
