@@ -2,11 +2,17 @@
 name = "discordant"
 version = "0.1.0"
 edition = "2021"
+description = "Types and utilities for creating Discord bots."
+homepage = "https://github.com/devnought/discordant"
+keywords = ["discord"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/devnought/discordant"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [workspace]
 
 [dependencies]
-discordant_types = { path = "./discordant_types" }
-discordant_util = { path = "./discordant_util" }
+discordant_types = { path = "./discordant_types", version = "0.1.0" }
+discordant_util = { path = "./discordant_util", version = "0.1.0" }
