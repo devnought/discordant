@@ -1,6 +1,6 @@
 [package]
 name = "discordant_types"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2021"
 description = "Raw types for interacting with Discord"
 homepage = "https://github.com/devnought/discordant"
