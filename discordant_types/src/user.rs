@@ -9,6 +9,7 @@ pub struct User<'a> {
     pub id: Snowflake,
     pub username: Cow<'a, str>,
     pub discriminator: Cow<'a, str>,
+    pub global_name: Option<Cow<'a, str>>,
     pub avatar: Option<Cow<'a, str>>,
     pub bot: Option<bool>,
     pub system: Option<bool>,
