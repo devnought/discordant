@@ -17,6 +17,16 @@ pub struct CommandHandler<'a>(
 #[async_trait]
 pub trait DiscordHandler {
     fn application_commands(&self) -> &HashMap<Cow<'_, str>, CommandHandler>;
+    fn command_list(&self) -> Vec<ApplicationCommand> {
+        let commands = self.application_commands();
+
+        let res = commands
+            .values()
+            .map(|CommandHandler(c, _)| c.clone())
+            .collect::<Vec<_>>();
+
+        res
+    }
 
     async fn post_index(
         &self,

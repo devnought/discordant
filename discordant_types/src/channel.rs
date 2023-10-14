@@ -41,7 +41,7 @@ pub struct Channel<'a> {
     pub permissions: Option<Cow<'a, str>>,
 }
 
-#[derive(Debug, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
+#[derive(Debug, Clone, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum ChannelType {
     GuildText = 0,

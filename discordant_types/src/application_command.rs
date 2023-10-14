@@ -5,7 +5,7 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::ChannelType;
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct ApplicationCommand<'a> {
     pub name: Cow<'a, str>,
 
@@ -102,7 +102,7 @@ impl<'a> ApplicationCommand<'a> {
     }
 }
 
-#[derive(Debug, Default, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
+#[derive(Debug, Default, Clone, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum ApplicationCommandTypeDef {
     #[default]
@@ -111,7 +111,7 @@ pub enum ApplicationCommandTypeDef {
     Message = 3,
 }
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct ApplicationCommandOption<'a> {
     #[serde(rename = "type")]
     pub application_command_option_type: ApplicationCommandOptionType,
@@ -242,7 +242,7 @@ impl<'a> ApplicationCommandOption<'a> {
     }
 }
 
-#[derive(Debug, Default, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
+#[derive(Debug, Default, Clone, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum ApplicationCommandOptionType {
     #[default]
@@ -259,13 +259,13 @@ pub enum ApplicationCommandOptionType {
     Attachment = 11,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ApplicationCommandOptionChoice<'a> {
     pub name: Cow<'a, str>,
     pub value: ApplicationCommandOptionChoiceValue<'a>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum ApplicationCommandOptionChoiceValue<'a> {
     String(Cow<'a, str>),
@@ -273,7 +273,7 @@ pub enum ApplicationCommandOptionChoiceValue<'a> {
     Double(f64),
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum MinMaxValue {
     Integer(i64),
     Number(f64),
