@@ -2,15 +2,13 @@ use std::{collections::HashMap, num::ParseIntError};
 
 use ed25519_dalek::{PublicKey, Signature, Verifier};
 use http::HeaderMap;
+use log::debug;
 
 pub mod handler;
 
 #[derive(Debug, Clone)]
 pub struct State {
     pub public_key: String,
-    pub client_id: String,
-    pub client_secret: String,
-    pub redirect_url: String,
 }
 
 #[derive(Debug)]
@@ -34,12 +32,15 @@ pub fn discord_verify(state: &State, body: &str, headers: HeaderMap) -> DiscordV
     let public_key = state.public_key.as_str();
     let valid = verify_signature(&headers, body, public_key);
 
+    debug!("{valid:?}");
+
     match valid {
         Err(_) | Ok(false) => DiscordVerify::Invalid,
         _ => DiscordVerify::Valid,
     }
 }
 
+#[derive(Debug)]
 pub enum VerifyError {
     PublicKeyDecode,
     PublicKeyFromBytes,
@@ -77,7 +78,9 @@ pub fn verify_signature(
         PublicKey::from_bytes(&public_key_vec).map_err(|_| VerifyError::PublicKeyFromBytes)?
     };
 
-    match public_key.verify(timestamp_body.as_bytes(), &signature) {
+    let verify = public_key.verify(timestamp_body.as_bytes(), &signature);
+
+    match verify {
         Ok(_) => Ok(true),
         Err(_) => Ok(false),
     }

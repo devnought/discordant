@@ -16,3 +16,4 @@ repository = "https://github.com/devnought/discordant"
 [dependencies]
 discordant_types = { path = "./discordant_types", version = "0.2.0" }
 discordant_util = { path = "./discordant_util", version = "0.2.0" }
+tracing = "0.1.39"
