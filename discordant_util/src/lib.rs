@@ -51,7 +51,7 @@ where
     let public_key = state.public_key();
     let valid = verify_signature(&headers, body, &public_key);
 
-    debug!("{valid:?}");
+    debug!("discord_verify: {valid:?}");
 
     match valid {
         Err(_) | Ok(false) => DiscordVerify::Invalid,
