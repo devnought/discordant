@@ -14,19 +14,19 @@ pub struct CommandHandler<'a, S>(
     pub fn(&S, Interaction) -> Result<InteractionResponse<'a>, StatusCode>,
 )
 where
-    S: DiscordState;
+    S: DiscordState<'a>;
 
 #[derive(Debug)]
 pub struct DiscordHandler<'a, S>
 where
-    S: DiscordState,
+    S: DiscordState<'a>,
 {
     commands: HashMap<Cow<'a, str>, CommandHandler<'a, S>>,
 }
 
 impl<'a, S> DiscordHandler<'a, S>
 where
-    S: DiscordState,
+    S: DiscordState<'a>,
 {
     pub fn new() -> Self {
         Self {
@@ -60,7 +60,7 @@ where
         headers: HeaderMap,
     ) -> Result<InteractionResponse, StatusCode>
     where
-        S: DiscordState,
+        S: DiscordState<'a>,
     {
         let verify = discord_verify(state, &body, headers);
 

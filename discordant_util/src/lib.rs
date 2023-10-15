@@ -6,9 +6,9 @@ use tracing::debug;
 
 pub mod handler;
 
-pub trait DiscordState {
-    fn public_key(&self) -> &Cow<'_, str>;
-    fn application_id(&self) -> &Cow<'_, str>;
+pub trait DiscordState<'a> {
+    fn public_key(&self) -> Cow<'a, str>;
+    fn application_id(&self) -> Cow<'a, str>;
 }
 
 #[derive(Debug, Clone)]
@@ -17,13 +17,13 @@ pub struct State<'a> {
     pub application_id: Cow<'a, str>,
 }
 
-impl<'a> DiscordState for State<'a> {
-    fn public_key(&self) -> &Cow<'_, str> {
-        &self.public_key
+impl<'a> DiscordState<'a> for State<'a> {
+    fn public_key(&self) -> Cow<'a, str> {
+        self.public_key.clone()
     }
 
-    fn application_id(&self) -> &Cow<'_, str> {
-        &self.application_id
+    fn application_id(&self) -> Cow<'a, str> {
+        self.application_id.clone()
     }
 }
 
@@ -33,9 +33,9 @@ pub enum DiscordVerify {
     Invalid,
 }
 
-pub fn discord_verify<S>(state: &S, body: &str, headers: HeaderMap) -> DiscordVerify
+pub fn discord_verify<'a, S>(state: &S, body: &str, headers: HeaderMap) -> DiscordVerify
 where
-    S: DiscordState,
+    S: DiscordState<'a>,
 {
     let headers = headers
         .iter()
