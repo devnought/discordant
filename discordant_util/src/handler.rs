@@ -53,7 +53,7 @@ where
         res
     }
 
-    pub async fn post_index(
+    pub async fn handle_request(
         &self,
         state: &S,
         body: String,
