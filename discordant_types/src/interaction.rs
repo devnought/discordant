@@ -80,28 +80,119 @@ pub struct MessageInteraction<'a> {
 pub struct Component<'a> {
     #[serde(rename = "type")]
     pub component_type: ComponentType,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_id: Option<Cow<'a, str>>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disabled: Option<bool>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub style: Option<ButtonStyle>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub label: Option<Cow<'a, str>>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub emoji: Option<Emoji<'a>>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub url: Option<Cow<'a, str>>,
+
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub options: Vec<SelectOption<'a>>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub placeholder: Option<Cow<'a, str>>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub min_values: Option<u64>,
+    pub min_values: Option<i64>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub max_values: Option<u64>,
+    pub max_values: Option<i64>,
+
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub components: Vec<Component<'a>>,
+}
+
+impl<'a> Component<'a> {
+    pub fn new() -> Self {
+        Self {
+            ..Default::default()
+        }
+    }
+
+    pub fn component_type(mut self, value: ComponentType) -> Self {
+        self.component_type = value;
+        self
+    }
+
+    pub fn custom_id<T>(mut self, value: T) -> Self
+    where
+        T: Into<Cow<'a, str>>,
+    {
+        self.custom_id = Some(value.into());
+        self
+    }
+
+    pub fn disabled(mut self, value: bool) -> Self {
+        self.disabled = Some(value);
+        self
+    }
+
+    pub fn style(mut self, value: ButtonStyle) -> Self {
+        self.style = Some(value);
+        self
+    }
+
+    pub fn label<T>(mut self, value: T) -> Self
+    where
+        T: Into<Cow<'a, str>>,
+    {
+        self.label = Some(value.into());
+        self
+    }
+
+    pub fn emoji(mut self, value: Emoji<'a>) -> Self {
+        self.emoji = Some(value);
+        self
+    }
+
+    pub fn url<T>(mut self, value: T) -> Self
+    where
+        T: Into<Cow<'a, str>>,
+    {
+        self.url = Some(value.into());
+        self
+    }
+
+    pub fn option(mut self, value: SelectOption<'a>) -> Self {
+        self.options.push(value);
+        self
+    }
+
+    pub fn placeholder<T>(mut self, value: T) -> Self
+    where
+        T: Into<Cow<'a, str>>,
+    {
+        self.placeholder = Some(value.into());
+        self
+    }
+
+    pub fn min_values(mut self, value: i64) -> Self {
+        self.min_values = Some(value);
+        self
+    }
+
+    pub fn max_values(mut self, value: i64) -> Self {
+        self.max_values = Some(value);
+        self
+    }
+
+    pub fn component(mut self, value: Component<'a>) -> Self {
+        self.components.push(value);
+        self
+    }
 }
 
 #[derive(Debug, Default, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
@@ -166,7 +257,7 @@ pub enum ApplicationCommandInteractionDataOption<'a> {
     // #[serde(rename = 6)]
     User {
         name: Cow<'a, str>,
-        value: Option<Cow<'a, str>>,
+        value: Option<Snowflake>,
     },
     // #[serde(rename = 7)]
     Channel(Box<ChannelVariant<'a>>),
@@ -280,7 +371,7 @@ impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandInteractionDataOptio
                 name,
                 value: value_raw
                     .and_then(Value::as_str)
-                    .map(|x| x.to_string().into()),
+                    .map(|x| Snowflake::from(x)),
             },
             7 => ApplicationCommandInteractionDataOption::Channel(Box::new(ChannelVariant {
                 name,
