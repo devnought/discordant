@@ -4,7 +4,7 @@ use discordant_types::{
     ApplicationCommand, Interaction, InteractionCallbackType, InteractionResponse, InteractionType,
 };
 use http::{HeaderMap, StatusCode};
-use log::info;
+use tracing::{debug, info};
 
 use crate::{discord_verify, DiscordState, DiscordVerify};
 
@@ -107,6 +107,7 @@ where
             .data
             .as_ref()
             .ok_or(StatusCode::INTERNAL_SERVER_ERROR)?;
+
         let name = data
             .name
             .as_ref()
@@ -122,8 +123,9 @@ where
 
     pub async fn message_component(
         &self,
-        _interaction: Interaction<'_>,
+        interaction: Interaction<'_>,
     ) -> Result<InteractionResponse, StatusCode> {
-        Err(StatusCode::NOT_FOUND)
+        debug!("{interaction:#?}");
+        Err(StatusCode::INTERNAL_SERVER_ERROR)
     }
 }

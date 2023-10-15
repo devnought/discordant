@@ -2,7 +2,7 @@ use std::{borrow::Cow, collections::HashMap, num::ParseIntError};
 
 use ed25519_dalek::{PublicKey, Signature, Verifier};
 use http::HeaderMap;
-use log::debug;
+use tracing::debug;
 
 pub mod handler;
 
