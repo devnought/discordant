@@ -1,26 +1,51 @@
 use std::{borrow::Cow, collections::HashMap};
 
-use async_trait::async_trait;
 use discordant_types::{
     ApplicationCommand, Interaction, InteractionCallbackType, InteractionResponse, InteractionType,
 };
 use http::{HeaderMap, StatusCode};
 use log::info;
 
-use crate::{discord_verify, DiscordVerify, State};
+use crate::{discord_verify, DiscordState, DiscordVerify};
 
-pub struct CommandHandler<'a>(
+#[derive(Debug)]
+pub struct CommandHandler<'a, S>(
     pub ApplicationCommand<'a>,
-    pub fn(Interaction) -> Result<InteractionResponse<'a>, StatusCode>,
-);
+    pub fn(&S, Interaction) -> Result<InteractionResponse<'a>, StatusCode>,
+)
+where
+    S: DiscordState;
 
-#[async_trait]
-pub trait DiscordHandler {
-    fn application_commands(&self) -> &HashMap<Cow<'_, str>, CommandHandler>;
-    fn command_list(&self) -> Vec<ApplicationCommand> {
-        let commands = self.application_commands();
+#[derive(Debug)]
+pub struct DiscordHandler<'a, S>
+where
+    S: DiscordState,
+{
+    commands: HashMap<Cow<'a, str>, CommandHandler<'a, S>>,
+}
 
-        let res = commands
+impl<'a, S> DiscordHandler<'a, S>
+where
+    S: DiscordState,
+{
+    pub fn new() -> Self {
+        Self {
+            commands: HashMap::new(),
+        }
+    }
+
+    pub fn command(mut self, value: CommandHandler<'a, S>) -> Self {
+        let CommandHandler(command, handler) = value;
+
+        self.commands
+            .insert(command.name.clone(), CommandHandler(command, handler));
+
+        self
+    }
+
+    pub fn command_list(&self) -> Vec<ApplicationCommand> {
+        let res = self
+            .commands
             .values()
             .map(|CommandHandler(c, _)| c.clone())
             .collect::<Vec<_>>();
@@ -28,12 +53,15 @@ pub trait DiscordHandler {
         res
     }
 
-    async fn post_index(
+    pub async fn post_index(
         &self,
-        state: &State,
+        state: &S,
         body: String,
         headers: HeaderMap,
-    ) -> Result<InteractionResponse, StatusCode> {
+    ) -> Result<InteractionResponse, StatusCode>
+    where
+        S: DiscordState,
+    {
         let verify = discord_verify(state, &body, headers);
 
         match verify {
@@ -52,7 +80,7 @@ pub trait DiscordHandler {
                         data: None,
                     },
                     InteractionType::ApplicationCommand => {
-                        self.application_command(interaction).await?
+                        self.application_command(state, interaction).await?
                     }
                     InteractionType::MessageComponent => {
                         self.message_component(interaction).await?
@@ -70,8 +98,9 @@ pub trait DiscordHandler {
         }
     }
 
-    async fn application_command(
+    pub async fn application_command(
         &self,
+        state: &S,
         interaction: Interaction<'_>,
     ) -> Result<InteractionResponse, StatusCode> {
         let data = interaction
@@ -83,16 +112,15 @@ pub trait DiscordHandler {
             .as_ref()
             .ok_or(StatusCode::INTERNAL_SERVER_ERROR)?;
 
-        let command_map = self.application_commands();
-
-        let CommandHandler(_, handler) = command_map
+        let CommandHandler(_, handler) = self
+            .commands
             .get(name)
             .ok_or(StatusCode::INTERNAL_SERVER_ERROR)?;
 
-        handler(interaction)
+        handler(state, interaction)
     }
 
-    async fn message_component(
+    pub async fn message_component(
         &self,
         _interaction: Interaction<'_>,
     ) -> Result<InteractionResponse, StatusCode> {

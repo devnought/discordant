@@ -1,4 +1,4 @@
-use std::{collections::HashMap, num::ParseIntError};
+use std::{borrow::Cow, collections::HashMap, num::ParseIntError};
 
 use ed25519_dalek::{PublicKey, Signature, Verifier};
 use http::HeaderMap;
@@ -6,9 +6,25 @@ use log::debug;
 
 pub mod handler;
 
+pub trait DiscordState {
+    fn public_key(&self) -> &Cow<'_, str>;
+    fn application_id(&self) -> &Cow<'_, str>;
+}
+
 #[derive(Debug, Clone)]
-pub struct State {
-    pub public_key: String,
+pub struct State<'a> {
+    pub public_key: Cow<'a, str>,
+    pub application_id: Cow<'a, str>,
+}
+
+impl<'a> DiscordState for State<'a> {
+    fn public_key(&self) -> &Cow<'_, str> {
+        &self.public_key
+    }
+
+    fn application_id(&self) -> &Cow<'_, str> {
+        &self.application_id
+    }
 }
 
 #[derive(Debug)]
@@ -17,7 +33,10 @@ pub enum DiscordVerify {
     Invalid,
 }
 
-pub fn discord_verify(state: &State, body: &str, headers: HeaderMap) -> DiscordVerify {
+pub fn discord_verify<S>(state: &S, body: &str, headers: HeaderMap) -> DiscordVerify
+where
+    S: DiscordState,
+{
     let headers = headers
         .iter()
         .filter_map(|(name, value)| {
@@ -29,8 +48,8 @@ pub fn discord_verify(state: &State, body: &str, headers: HeaderMap) -> DiscordV
         })
         .collect::<HashMap<_, _>>();
 
-    let public_key = state.public_key.as_str();
-    let valid = verify_signature(&headers, body, public_key);
+    let public_key = state.public_key();
+    let valid = verify_signature(&headers, body, &public_key);
 
     debug!("{valid:?}");
 
