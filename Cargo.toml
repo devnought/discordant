@@ -1,6 +1,6 @@
 [package]
 name = "discordant"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 description = "Types and utilities for creating Discord bots."
 homepage = "https://github.com/devnought/discordant"
@@ -14,6 +14,6 @@ repository = "https://github.com/devnought/discordant"
 [workspace]
 
 [dependencies]
-discordant_types = { path = "./discordant_types", version = "0.2.0" }
-discordant_util = { path = "./discordant_util", version = "0.2.0" }
+discordant_types = { path = "./discordant_types", version = "0.3.0" }
+discordant_util = { path = "./discordant_util", version = "0.3.0" }
 tracing = "0.1.39"
