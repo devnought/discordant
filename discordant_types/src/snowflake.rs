@@ -24,6 +24,12 @@ impl From<&str> for Snowflake {
     }
 }
 
+impl From<Snowflake> for String {
+    fn from(Snowflake(value): Snowflake) -> Self {
+        value.to_string()
+    }
+}
+
 struct SnowflakeVisitor;
 
 impl<'de> Visitor<'de> for SnowflakeVisitor {
