@@ -1,19 +1,17 @@
-use std::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 use super::{Role, Snowflake, User};
 
 #[derive(Debug, Default, Serialize, Deserialize)]
-pub struct Emoji<'a> {
+pub struct Emoji {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<Snowflake>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub name: Option<Cow<'a, str>>,
+    pub name: Option<String>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub roles: Vec<Role<'a>>,
+    pub roles: Vec<Role>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub user: Option<User<'a>>,
+    pub user: Option<User>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub require_colons: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]

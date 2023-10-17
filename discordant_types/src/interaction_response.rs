@@ -1,5 +1,3 @@
-use std::borrow::Cow;
-
 use serde::Serialize;
 use serde_repr::Serialize_repr;
 
@@ -8,15 +6,15 @@ use crate::Attachment;
 use super::{AllowedMentions, Component, Embed};
 
 #[derive(Debug, Default, Serialize)]
-pub struct InteractionResponse<'a> {
+pub struct InteractionResponse {
     #[serde(rename = "type")]
     pub response_type: InteractionCallbackType,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub data: Option<InteractionCallbackData<'a>>,
+    pub data: Option<InteractionCallbackData>,
 }
 
-impl<'a> InteractionResponse<'a> {
+impl InteractionResponse {
     pub fn new() -> Self {
         Self {
             ..Default::default()
@@ -28,7 +26,7 @@ impl<'a> InteractionResponse<'a> {
         self
     }
 
-    pub fn data(mut self, value: InteractionCallbackData<'a>) -> Self {
+    pub fn data(mut self, value: InteractionCallbackData) -> Self {
         self.data = Some(value);
         self
     }
@@ -48,30 +46,30 @@ pub enum InteractionCallbackType {
 }
 
 #[derive(Debug, Default, Serialize)]
-pub struct InteractionCallbackData<'a> {
+pub struct InteractionCallbackData {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tts: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub content: Option<Cow<'a, str>>,
+    pub content: Option<String>,
 
     #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub embeds: Vec<Embed<'a>>,
+    pub embeds: Vec<Embed>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub allowed_mentions: Option<AllowedMentions<'a>>,
+    pub allowed_mentions: Option<AllowedMentions>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub flags: Option<InteractionCallbackDataFlags>,
 
     #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub components: Vec<Component<'a>>,
+    pub components: Vec<Component>,
 
     #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub attachments: Vec<Attachment<'a>>,
+    pub attachments: Vec<Attachment>,
 }
 
-impl<'a> InteractionCallbackData<'a> {
+impl InteractionCallbackData {
     pub fn new() -> Self {
         Self {
             ..Default::default()
@@ -85,18 +83,18 @@ impl<'a> InteractionCallbackData<'a> {
 
     pub fn content<T>(mut self, value: T) -> Self
     where
-        T: Into<Cow<'a, str>>,
+        T: Into<String>,
     {
         self.content = Some(value.into());
         self
     }
 
-    pub fn embed(mut self, value: Embed<'a>) -> Self {
+    pub fn embed(mut self, value: Embed) -> Self {
         self.embeds.push(value);
         self
     }
 
-    pub fn allowed_mentions(mut self, value: AllowedMentions<'a>) -> Self {
+    pub fn allowed_mentions(mut self, value: AllowedMentions) -> Self {
         self.allowed_mentions = Some(value);
         self
     }
@@ -106,12 +104,12 @@ impl<'a> InteractionCallbackData<'a> {
         self
     }
 
-    pub fn component(mut self, value: Component<'a>) -> Self {
+    pub fn component(mut self, value: Component) -> Self {
         self.components.push(value);
         self
     }
 
-    pub fn attachments(mut self, value: Attachment<'a>) -> Self {
+    pub fn attachments(mut self, value: Attachment) -> Self {
         self.attachments.push(value);
         self
     }

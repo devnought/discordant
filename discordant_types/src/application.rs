@@ -1,28 +1,26 @@
-use std::borrow::Cow;
-
 use serde::Deserialize;
 
 use super::{Snowflake, Team, User};
 
 #[derive(Debug, Deserialize)]
-pub struct Application<'a> {
+pub struct Application {
     pub id: Snowflake,
-    pub name: Cow<'a, str>,
-    pub icon: Option<Cow<'a, str>>,
-    pub description: Cow<'a, str>,
+    pub name: String,
+    pub icon: Option<String>,
+    pub description: String,
     #[serde(default)]
-    pub rpc_origins: Vec<Cow<'a, str>>,
+    pub rpc_origins: Vec<String>,
     pub bot_public: bool,
     pub bot_require_code_grant: bool,
-    pub terms_of_service_url: Option<Cow<'a, str>>,
-    pub privacy_policy_url: Option<Cow<'a, str>>,
-    pub owner: Option<User<'a>>,
-    pub summary: Cow<'a, str>,
-    pub verify_key: Cow<'a, str>,
-    pub team: Option<Team<'a>>,
+    pub terms_of_service_url: Option<String>,
+    pub privacy_policy_url: Option<String>,
+    pub owner: Option<User>,
+    pub summary: String,
+    pub verify_key: String,
+    pub team: Option<Team>,
     pub guild_id: Option<Snowflake>,
     pub primary_sku_id: Option<Snowflake>,
-    pub slug: Option<Cow<'a, str>>,
-    pub cover_image: Option<Cow<'a, str>>,
+    pub slug: Option<String>,
+    pub cover_image: Option<String>,
     pub flags: Option<u64>,
 }

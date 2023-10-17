@@ -1,20 +1,18 @@
-use std::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 use super::Snowflake;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct User<'a> {
+pub struct User {
     pub id: Snowflake,
-    pub username: Cow<'a, str>,
-    pub discriminator: Cow<'a, str>,
+    pub username: String,
+    pub discriminator: String,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub global_name: Option<Cow<'a, str>>,
+    pub global_name: Option<String>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub avatar: Option<Cow<'a, str>>,
+    pub avatar: Option<String>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bot: Option<bool>,
@@ -26,19 +24,19 @@ pub struct User<'a> {
     pub mfa_enabled: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub banner: Option<Cow<'a, str>>,
+    pub banner: Option<String>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub accent_color: Option<u64>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub locale: Option<Cow<'a, str>>,
+    pub locale: Option<String>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub verified: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub email: Option<Cow<'a, str>>,
+    pub email: Option<String>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub flags: Option<u64>,
@@ -50,5 +48,5 @@ pub struct User<'a> {
     pub public_flags: Option<u64>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub avatar_decoration: Option<Cow<'a, str>>,
+    pub avatar_decoration: Option<String>,
 }

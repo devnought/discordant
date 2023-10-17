@@ -1,15 +1,16 @@
-use std::{borrow::Cow, collections::HashMap};
+use std::{borrow::Cow, collections::HashMap, future::Future, rc::Rc};
 
 use discordant_types::{
     ApplicationCommand, Interaction, InteractionCallbackType, InteractionResponse, InteractionType,
 };
+use futures_util::future::LocalBoxFuture;
 use http::{HeaderMap, StatusCode};
 
 use crate::{discord_verify, DiscordState, DiscordVerify};
 
-pub type HandleAction<'a, S> = fn(&S, Interaction) -> Result<InteractionResponse<'a>, StatusCode>;
+type HandleAction<'a, S> =
+    Rc<dyn 'a + Fn(S, Interaction) -> LocalBoxFuture<'a, Result<InteractionResponse, StatusCode>>>;
 
-#[derive(Debug)]
 pub struct CommandHandler<'a, S>
 where
     S: DiscordState<'a>,
@@ -20,22 +21,37 @@ where
 
 impl<'a, S> CommandHandler<'a, S>
 where
-    S: DiscordState<'a>,
+    S: DiscordState<'a> + 'a,
 {
-    pub fn new(
-        command: ApplicationCommand<'a>,
-        handler: fn(&S, Interaction) -> Result<InteractionResponse<'a>, StatusCode>,
-    ) -> Self {
-        Self { command, handler }
+    pub fn new<R>(command: ApplicationCommand<'a>, handler: fn(S, Interaction) -> R) -> Self
+    where
+        R: Future<Output = Result<InteractionResponse, StatusCode>> + 'a,
+    {
+        Self {
+            command,
+            handler: Rc::new(move |state, interaction| Box::pin(handler(state, interaction))),
+        }
     }
 }
 
-#[derive(Debug)]
-pub struct ComponentHandler<'a, S>(pub HandleAction<'a, S>)
+pub struct ComponentHandler<'a, S>(HandleAction<'a, S>)
 where
     S: DiscordState<'a>;
 
-#[derive(Debug)]
+impl<'a, S> ComponentHandler<'a, S>
+where
+    S: DiscordState<'a> + 'a,
+{
+    pub fn new<R>(handler: fn(S, Interaction) -> R) -> Self
+    where
+        R: Future<Output = Result<InteractionResponse, StatusCode>> + 'a,
+    {
+        Self(Rc::new(move |state, interaction| {
+            Box::pin(handler(state, interaction))
+        }))
+    }
+}
+
 pub struct DiscordHandler<'a, S>
 where
     S: DiscordState<'a>,
@@ -80,14 +96,14 @@ where
 
     pub async fn handle_request(
         &self,
-        state: &S,
+        state: S,
         body: String,
         headers: HeaderMap,
     ) -> Result<InteractionResponse, StatusCode>
     where
         S: DiscordState<'a>,
     {
-        let verify = discord_verify(state, &body, headers);
+        let verify = discord_verify(&state, &body, headers);
 
         match verify {
             DiscordVerify::Invalid => Err(StatusCode::UNAUTHORIZED),
@@ -123,8 +139,8 @@ where
 
     pub async fn application_command(
         &self,
-        state: &S,
-        interaction: Interaction<'_>,
+        state: S,
+        interaction: Interaction,
     ) -> Result<InteractionResponse, StatusCode> {
         let data = interaction
             .data
@@ -138,16 +154,16 @@ where
 
         let CommandHandler { handler, .. } = self
             .commands
-            .get(name)
+            .get(name.as_str())
             .ok_or(StatusCode::INTERNAL_SERVER_ERROR)?;
 
-        handler(state, interaction)
+        handler(state, interaction).await
     }
 
     pub async fn message_component(
         &self,
-        state: &S,
-        interaction: Interaction<'_>,
+        state: S,
+        interaction: Interaction,
     ) -> Result<InteractionResponse, StatusCode> {
         let name = &interaction
             .message
@@ -158,9 +174,9 @@ where
 
         let ComponentHandler(handler) = self
             .components
-            .get(name)
+            .get(name.as_str())
             .ok_or(StatusCode::INTERNAL_SERVER_ERROR)?;
 
-        handler(state, interaction)
+        handler(state, interaction).await
     }
 }

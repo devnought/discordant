@@ -1,4 +1,4 @@
-use std::{borrow::Cow, collections::HashMap, fmt::Display};
+use std::{collections::HashMap, fmt::Display};
 
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
@@ -6,22 +6,22 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 use super::{Channel, Emoji, GuildMember, Message, Role, Snowflake, User};
 
 #[derive(Debug, Deserialize)]
-pub struct Interaction<'a> {
+pub struct Interaction {
     pub id: Snowflake,
     pub application_id: Snowflake,
     #[serde(rename = "type")]
     pub interaction_type: InteractionType,
-    pub data: Option<InteractionData<'a>>,
+    pub data: Option<InteractionData>,
     pub guild_id: Option<Snowflake>,
     pub channel_id: Option<Snowflake>,
-    pub member: Option<GuildMember<'a>>,
-    pub user: Option<User<'a>>,
-    pub token: Cow<'a, str>,
+    pub member: Option<GuildMember>,
+    pub user: Option<User>,
+    pub token: String,
     pub version: u64,
-    pub message: Option<Message<'a>>,
-    pub app_permissions: Option<Cow<'a, str>>,
-    pub locale: Option<Cow<'a, str>>,
-    pub guild_locale: Option<Cow<'a, str>>,
+    pub message: Option<Message>,
+    pub app_permissions: Option<String>,
+    pub locale: Option<String>,
+    pub guild_locale: Option<String>,
 }
 
 #[derive(Debug, Eq, PartialEq, Deserialize_repr)]
@@ -35,18 +35,18 @@ pub enum InteractionType {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct InteractionData<'a> {
+pub struct InteractionData {
     pub id: Option<Snowflake>,
-    pub name: Option<Cow<'a, str>>,
+    pub name: Option<String>,
     #[serde(rename = "type")]
     pub data_type: Option<ApplicationCommandType>,
-    pub resolved: Option<ResolvedData<'a>>,
+    pub resolved: Option<ResolvedData>,
     #[serde(default)]
-    pub options: Vec<ApplicationCommandInteractionDataOption<'a>>,
-    pub custom_id: Option<Cow<'a, str>>,
+    pub options: Vec<ApplicationCommandInteractionDataOption>,
+    pub custom_id: Option<String>,
     pub component_type: Option<ComponentType>,
     #[serde(default)]
-    pub values: Vec<SelectOption<'a>>,
+    pub values: Vec<SelectOption>,
     pub target_id: Option<Snowflake>,
 }
 
@@ -59,30 +59,30 @@ pub enum ApplicationCommandType {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct ResolvedData<'a> {
-    pub users: Option<HashMap<Snowflake, User<'a>>>,
-    pub members: Option<HashMap<Snowflake, GuildMember<'a>>>,
-    pub roles: Option<HashMap<Snowflake, Role<'a>>>,
-    pub channels: Option<HashMap<Snowflake, Channel<'a>>>,
-    pub messages: Option<HashMap<Snowflake, Message<'a>>>,
+pub struct ResolvedData {
+    pub users: Option<HashMap<Snowflake, User>>,
+    pub members: Option<HashMap<Snowflake, GuildMember>>,
+    pub roles: Option<HashMap<Snowflake, Role>>,
+    pub channels: Option<HashMap<Snowflake, Channel>>,
+    pub messages: Option<HashMap<Snowflake, Message>>,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct MessageInteraction<'a> {
+pub struct MessageInteraction {
     pub id: Snowflake,
     #[serde(rename = "type")]
     pub message_interaction_type: InteractionType,
-    pub name: Cow<'a, str>,
-    pub user: User<'a>,
+    pub name: String,
+    pub user: User,
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
-pub struct Component<'a> {
+pub struct Component {
     #[serde(rename = "type")]
     pub component_type: ComponentType,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_id: Option<Cow<'a, str>>,
+    pub custom_id: Option<String>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disabled: Option<bool>,
@@ -91,19 +91,19 @@ pub struct Component<'a> {
     pub style: Option<ButtonStyle>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub label: Option<Cow<'a, str>>,
+    pub label: Option<String>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub emoji: Option<Emoji<'a>>,
+    pub emoji: Option<Emoji>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub url: Option<Cow<'a, str>>,
+    pub url: Option<String>,
 
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub options: Vec<SelectOption<'a>>,
+    pub options: Vec<SelectOption>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub placeholder: Option<Cow<'a, str>>,
+    pub placeholder: Option<String>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub min_values: Option<i64>,
@@ -112,10 +112,10 @@ pub struct Component<'a> {
     pub max_values: Option<i64>,
 
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub components: Vec<Component<'a>>,
+    pub components: Vec<Component>,
 }
 
-impl<'a> Component<'a> {
+impl Component {
     pub fn new() -> Self {
         Self {
             ..Default::default()
@@ -129,7 +129,7 @@ impl<'a> Component<'a> {
 
     pub fn custom_id<T>(mut self, value: T) -> Self
     where
-        T: Into<Cow<'a, str>>,
+        T: Into<String>,
     {
         self.custom_id = Some(value.into());
         self
@@ -147,33 +147,33 @@ impl<'a> Component<'a> {
 
     pub fn label<T>(mut self, value: T) -> Self
     where
-        T: Into<Cow<'a, str>>,
+        T: Into<String>,
     {
         self.label = Some(value.into());
         self
     }
 
-    pub fn emoji(mut self, value: Emoji<'a>) -> Self {
+    pub fn emoji(mut self, value: Emoji) -> Self {
         self.emoji = Some(value);
         self
     }
 
     pub fn url<T>(mut self, value: T) -> Self
     where
-        T: Into<Cow<'a, str>>,
+        T: Into<String>,
     {
         self.url = Some(value.into());
         self
     }
 
-    pub fn option(mut self, value: SelectOption<'a>) -> Self {
+    pub fn option(mut self, value: SelectOption) -> Self {
         self.options.push(value);
         self
     }
 
     pub fn placeholder<T>(mut self, value: T) -> Self
     where
-        T: Into<Cow<'a, str>>,
+        T: Into<String>,
     {
         self.placeholder = Some(value.into());
         self
@@ -189,7 +189,7 @@ impl<'a> Component<'a> {
         self
     }
 
-    pub fn component(mut self, value: Component<'a>) -> Self {
+    pub fn component(mut self, value: Component) -> Self {
         self.components.push(value);
         self
     }
@@ -215,75 +215,75 @@ pub enum ButtonStyle {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct SelectOption<'a> {
-    pub label: Cow<'a, str>,
-    pub value: Cow<'a, str>,
+pub struct SelectOption {
+    pub label: String,
+    pub value: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub description: Option<Cow<'a, str>>,
+    pub description: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub emoji: Option<Emoji<'a>>,
+    pub emoji: Option<Emoji>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub default: Option<bool>,
 }
 
 #[derive(Debug)]
 // #[serde(tag = "type")]
-pub enum ApplicationCommandInteractionDataOption<'a> {
+pub enum ApplicationCommandInteractionDataOption {
     // #[serde(rename = 1)]
     SubCommand {
-        name: Cow<'a, str>,
-        options: Vec<ApplicationCommandInteractionDataOption<'a>>,
+        name: String,
+        options: Vec<ApplicationCommandInteractionDataOption>,
     },
     // #[serde(rename = 2)]
     SubCommandGroup {
-        name: Cow<'a, str>,
-        options: Vec<ApplicationCommandInteractionDataOption<'a>>,
+        name: String,
+        options: Vec<ApplicationCommandInteractionDataOption>,
     },
     // #[serde(rename = 3)]
     String {
-        name: Cow<'a, str>,
-        value: Option<Cow<'a, str>>,
+        name: String,
+        value: Option<String>,
     },
     // #[serde(rename = 4)]
     Integer {
-        name: Cow<'a, str>,
+        name: String,
         value: Option<i64>,
     },
     // #[serde(rename = 5)]
     Boolean {
-        name: Cow<'a, str>,
+        name: String,
         value: Option<bool>,
     },
     // #[serde(rename = 6)]
     User {
-        name: Cow<'a, str>,
+        name: String,
         value: Option<Snowflake>,
     },
     // #[serde(rename = 7)]
-    Channel(Box<ChannelVariant<'a>>),
+    Channel(Box<ChannelVariant>),
     // #[serde(rename = 8)]
     Role {
-        name: Cow<'a, str>,
-        value: Option<Cow<'a, str>>,
+        name: String,
+        value: Option<String>,
     },
     // #[serde(rename = 9)]
     // Mentionable {
-    //     name: Cow<'a, str>,
+    //     name: String,
     //     value: Option<Mentionable>,
     // },
     // #[serde(rename = 10)]
     Number {
-        name: Cow<'a, str>,
+        name: String,
         value: Option<f64>,
     },
     // #[serde(rename = 11)]
     // Attachment {
-    //     name: Cow<'a, str>,
+    //     name: String,
     //     value: Option<Mentionable>,
     // },
 }
 
-impl<'a> Display for ApplicationCommandInteractionDataOption<'a> {
+impl Display for ApplicationCommandInteractionDataOption {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             ApplicationCommandInteractionDataOption::String { name, value, .. } => {
@@ -301,14 +301,14 @@ impl<'a> Display for ApplicationCommandInteractionDataOption<'a> {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct ChannelVariant<'a> {
-    pub name: Cow<'a, str>,
-    pub value: Option<Channel<'a>>,
+pub struct ChannelVariant {
+    pub name: String,
+    pub value: Option<Channel>,
     #[serde(default)]
-    pub options: Vec<ApplicationCommandInteractionDataOption<'a>>,
+    pub options: Vec<ApplicationCommandInteractionDataOption>,
 }
 
-impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandInteractionDataOption<'a> {
+impl<'de, 'a> serde::Deserialize<'de> for ApplicationCommandInteractionDataOption {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,

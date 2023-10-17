@@ -1,17 +1,15 @@
-use std::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 
 use super::Snowflake;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Role<'a> {
+pub struct Role {
     pub id: Snowflake,
-    pub name: Cow<'a, str>,
+    pub name: String,
     pub color: u64,
     pub hoist: bool,
     pub position: u64,
-    pub permissions: Cow<'a, str>,
+    pub permissions: String,
     pub managed: bool,
     pub mentionable: bool,
     pub tags: Option<RoleTags>,

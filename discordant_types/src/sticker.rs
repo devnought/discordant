@@ -1,14 +1,12 @@
-use std::borrow::Cow;
-
 use serde::Deserialize;
 use serde_repr::Deserialize_repr;
 
 use super::{Snowflake, User};
 
 #[derive(Debug, Deserialize)]
-pub struct StickerItem<'a> {
+pub struct StickerItem {
     pub id: Snowflake,
-    pub name: Cow<'a, str>,
+    pub name: String,
     pub format_type: StickerFormat,
 }
 
@@ -21,19 +19,19 @@ pub enum StickerFormat {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Sticker<'a> {
+pub struct Sticker {
     pub id: Snowflake,
     pub pack_id: Option<Snowflake>,
-    pub name: Cow<'a, str>,
-    pub description: Option<Cow<'a, str>>,
-    pub tags: Cow<'a, str>,
-    pub asset: Cow<'a, str>,
+    pub name: String,
+    pub description: Option<String>,
+    pub tags: String,
+    pub asset: String,
     #[serde(rename = "type")]
     pub sticker_type: StickerType,
     pub format_type: StickerFormat,
     pub available: Option<bool>,
     pub guild_id: Option<Snowflake>,
-    pub user: Option<User<'a>>,
+    pub user: Option<User>,
     pub sort_value: Option<u64>,
 }
 

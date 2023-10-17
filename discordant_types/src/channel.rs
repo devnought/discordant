@@ -1,5 +1,3 @@
-use std::borrow::Cow;
-
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
@@ -9,36 +7,36 @@ use super::{
 };
 
 #[derive(Debug, Deserialize)]
-pub struct Channel<'a> {
+pub struct Channel {
     pub id: Snowflake,
     #[serde(rename = "type")]
     pub channel_type: ChannelType,
     pub guild_id: Option<Snowflake>,
     pub position: Option<u64>,
     #[serde(default)]
-    pub permission_overwrites: Vec<Overwrite<'a>>,
-    pub name: Option<Cow<'a, str>>,
-    pub topic: Option<Cow<'a, str>>,
+    pub permission_overwrites: Vec<Overwrite>,
+    pub name: Option<String>,
+    pub topic: Option<String>,
     pub nsfw: Option<bool>,
     pub last_message_id: Option<Snowflake>,
     pub bitrate: Option<u64>,
     pub user_limit: Option<u64>,
     pub rate_limit_per_user: Option<u64>,
     #[serde(default)]
-    pub recipients: Vec<User<'a>>,
-    pub icon: Option<Cow<'a, str>>,
+    pub recipients: Vec<User>,
+    pub icon: Option<String>,
     pub owner_id: Option<Snowflake>,
     pub applicaiton_id: Option<Snowflake>,
     pub parent_id: Option<Snowflake>,
-    pub last_pin_timestamp: Option<Cow<'a, str>>,
-    pub rtc_region: Option<Cow<'a, str>>,
+    pub last_pin_timestamp: Option<String>,
+    pub rtc_region: Option<String>,
     pub video_quality_mode: Option<u64>,
     pub message_count: Option<u64>,
     pub member_count: Option<u64>,
-    pub thread_metadata: Option<ThreadMetadata<'a>>,
-    pub member: Option<ThreadMember<'a>>,
+    pub thread_metadata: Option<ThreadMetadata>,
+    pub member: Option<ThreadMember>,
     pub default_auto_archive_duration: Option<u64>,
-    pub permissions: Option<Cow<'a, str>>,
+    pub permissions: Option<String>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
@@ -58,12 +56,12 @@ pub enum ChannelType {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Overwrite<'a> {
+pub struct Overwrite {
     pub id: Snowflake,
     #[serde(rename = "type")]
     pub overwrite_type: OverwriteType,
-    pub allow: Cow<'a, str>,
-    pub deny: Cow<'a, str>,
+    pub allow: String,
+    pub deny: String,
 }
 
 #[derive(Debug, Eq, PartialEq, Deserialize_repr)]
@@ -74,82 +72,82 @@ pub enum OverwriteType {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct ThreadMetadata<'a> {
+pub struct ThreadMetadata {
     pub archived: bool,
     pub auto_archive_duration: u64,
-    pub archive_timestamp: Cow<'a, str>,
+    pub archive_timestamp: String,
     pub locked: bool,
     pub invitable: Option<bool>,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct ThreadMember<'a> {
+pub struct ThreadMember {
     pub id: Option<Snowflake>,
     pub user_id: Option<Snowflake>,
-    pub join_timestamp: Cow<'a, str>,
+    pub join_timestamp: String,
     pub flags: u64,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Message<'a> {
+pub struct Message {
     pub id: Snowflake,
     pub channel_id: Snowflake,
     pub guild_id: Option<Snowflake>,
-    pub author: User<'a>,
-    pub member: Option<GuildMember<'a>>,
-    pub content: Cow<'a, str>,
-    pub timestamp: Cow<'a, str>,
-    pub edited_timestamp: Option<Cow<'a, str>>,
+    pub author: User,
+    pub member: Option<GuildMember>,
+    pub content: String,
+    pub timestamp: String,
+    pub edited_timestamp: Option<String>,
     pub tts: bool,
     pub mention_everyone: bool,
-    pub mentions: Vec<User<'a>>,
-    pub mention_roles: Vec<Role<'a>>,
+    pub mentions: Vec<User>,
+    pub mention_roles: Vec<Role>,
     #[serde(default)]
-    pub mention_channels: Vec<ChannelMention<'a>>,
-    pub attachments: Vec<Attachment<'a>>,
-    pub embeds: Vec<Embed<'a>>,
+    pub mention_channels: Vec<ChannelMention>,
+    pub attachments: Vec<Attachment>,
+    pub embeds: Vec<Embed>,
     #[serde(default)]
-    pub reactions: Vec<Reaction<'a>>,
-    pub nonce: Option<Nonce<'a>>,
+    pub reactions: Vec<Reaction>,
+    pub nonce: Option<Nonce>,
     pub pinned: bool,
     pub webhook_id: Option<Snowflake>,
     #[serde(rename = "type")]
     pub message_type: MessageType,
-    pub activity: Option<MessageActivity<'a>>,
-    pub application: Option<Application<'a>>,
+    pub activity: Option<MessageActivity>,
+    pub application: Option<Application>,
     pub application_id: Option<Snowflake>,
     pub message_reference: Option<MessageReference>,
     pub flags: Option<u64>,
-    pub referenced_message: Option<Box<Message<'a>>>,
-    pub interaction: Option<MessageInteraction<'a>>,
-    pub thread: Option<Channel<'a>>,
+    pub referenced_message: Option<Box<Message>>,
+    pub interaction: Option<MessageInteraction>,
+    pub thread: Option<Channel>,
     #[serde(default)]
-    pub components: Vec<Component<'a>>,
+    pub components: Vec<Component>,
     #[serde(default)]
-    pub sticker_items: Vec<StickerItem<'a>>,
+    pub sticker_items: Vec<StickerItem>,
     #[serde(default)]
-    pub stickers: Vec<Sticker<'a>>,
+    pub stickers: Vec<Sticker>,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct ChannelMention<'a> {
+pub struct ChannelMention {
     pub id: Snowflake,
     pub guild_id: Snowflake,
     pub channel_mention_type: ChannelType,
-    pub name: Cow<'a, str>,
+    pub name: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Attachment<'a> {
+pub struct Attachment {
     pub id: Snowflake,
-    pub filename: Cow<'a, str>,
+    pub filename: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub description: Option<Cow<'a, str>>,
+    pub description: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub content_type: Option<Cow<'a, str>>,
+    pub content_type: Option<String>,
     pub size: u64,
-    pub url: Cow<'a, str>,
-    pub proxy_url: Cow<'a, str>,
+    pub url: String,
+    pub proxy_url: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub height: Option<u64>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -159,33 +157,33 @@ pub struct Attachment<'a> {
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
-pub struct Embed<'a> {
+pub struct Embed {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub title: Option<Cow<'a, str>>,
+    pub title: Option<String>,
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub embed_type: Option<EmbedType>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub description: Option<Cow<'a, str>>,
+    pub description: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub url: Option<Cow<'a, str>>,
+    pub url: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub timestamp: Option<Cow<'a, str>>,
+    pub timestamp: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub color: Option<u64>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub footer: Option<EmbedFooter<'a>>,
+    pub footer: Option<EmbedFooter>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub image: Option<EmbedImage<'a>>,
+    pub image: Option<EmbedImage>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub thumbnail: Option<EmbedThumbnail<'a>>,
+    pub thumbnail: Option<EmbedThumbnail>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub video: Option<EmbedVideo<'a>>,
+    pub video: Option<EmbedVideo>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub provider: Option<EmbedProvider<'a>>,
+    pub provider: Option<EmbedProvider>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub author: Option<EmbedAuthor<'a>>,
+    pub author: Option<EmbedAuthor>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub fields: Vec<EmbedField<'a>>,
+    pub fields: Vec<EmbedField>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -200,19 +198,19 @@ pub enum EmbedType {
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
-pub struct EmbedFooter<'a> {
-    pub text: Cow<'a, str>,
+pub struct EmbedFooter {
+    pub text: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub icon_url: Option<Cow<'a, str>>,
+    pub icon_url: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub proxy_icon_url: Option<Cow<'a, str>>,
+    pub proxy_icon_url: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct EmbedImage<'a> {
-    pub url: Cow<'a, str>,
+pub struct EmbedImage {
+    pub url: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub proxy_url: Option<Cow<'a, str>>,
+    pub proxy_url: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub height: Option<u64>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -220,22 +218,10 @@ pub struct EmbedImage<'a> {
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
-pub struct EmbedThumbnail<'a> {
-    pub url: Cow<'a, str>,
+pub struct EmbedThumbnail {
+    pub url: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub proxy_url: Option<Cow<'a, str>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub height: Option<u64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub width: Option<u64>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct EmbedVideo<'a> {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub url: Option<Cow<'a, str>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub proxy_url: Option<Cow<'a, str>>,
+    pub proxy_url: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub height: Option<u64>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -243,44 +229,56 @@ pub struct EmbedVideo<'a> {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct EmbedProvider<'a> {
+pub struct EmbedVideo {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub name: Option<Cow<'a, str>>,
+    pub url: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub url: Option<Cow<'a, str>>,
+    pub proxy_url: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub height: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub width: Option<u64>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct EmbedProvider {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub url: Option<String>,
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
-pub struct EmbedAuthor<'a> {
-    pub name: Cow<'a, str>,
+pub struct EmbedAuthor {
+    pub name: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub url: Option<Cow<'a, str>>,
+    pub url: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub icon_url: Option<Cow<'a, str>>,
+    pub icon_url: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub proxy_icon_url: Option<Cow<'a, str>>,
+    pub proxy_icon_url: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct EmbedField<'a> {
-    pub name: Cow<'a, str>,
-    pub value: Cow<'a, str>,
+pub struct EmbedField {
+    pub name: String,
+    pub value: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub inline: Option<bool>,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Reaction<'a> {
+pub struct Reaction {
     pub count: u64,
     pub me: bool,
-    pub emoji: Emoji<'a>,
+    pub emoji: Emoji,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(untagged)]
-pub enum Nonce<'a> {
+pub enum Nonce {
     Integer(u64),
-    String(Cow<'a, str>),
+    String(String),
 }
 
 #[derive(Debug, Eq, PartialEq, Deserialize_repr)]
@@ -312,10 +310,10 @@ pub enum MessageType {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct MessageActivity<'a> {
+pub struct MessageActivity {
     #[serde(rename = "type")]
     pub message_activity_type: MessageActivityType,
-    pub party_id: Option<Cow<'a, str>>,
+    pub party_id: Option<String>,
 }
 
 #[derive(Debug, Eq, PartialEq, Deserialize_repr)]
@@ -336,8 +334,8 @@ pub struct MessageReference {
 }
 
 #[derive(Debug, Serialize)]
-pub struct AllowedMentions<'a> {
-    pub parse: Vec<Cow<'a, str>>,
+pub struct AllowedMentions {
+    pub parse: Vec<String>,
     pub roles: Vec<Snowflake>,
     pub users: Vec<Snowflake>,
     pub replied_user: bool,

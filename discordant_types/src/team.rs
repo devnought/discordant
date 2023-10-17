@@ -1,22 +1,20 @@
-use std::borrow::Cow;
-
 use serde::Deserialize;
 
 use super::{Snowflake, User};
 
 #[derive(Debug, Deserialize)]
-pub struct Team<'a> {
-    pub icon: Option<Cow<'a, str>>,
+pub struct Team {
+    pub icon: Option<String>,
     pub id: Snowflake,
-    pub members: Vec<TeamMember<'a>>,
-    pub name: Cow<'a, str>,
+    pub members: Vec<TeamMember>,
+    pub name: String,
     pub owner_user_id: Snowflake,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct TeamMember<'a> {
+pub struct TeamMember {
     pub membership_state: u64,
-    pub permissions: Vec<Cow<'a, str>>,
+    pub permissions: Vec<String>,
     pub team_id: Snowflake,
-    pub user: User<'a>,
+    pub user: User,
 }
