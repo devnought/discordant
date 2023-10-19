@@ -1,4 +1,4 @@
-use std::{borrow::Cow, collections::HashMap, future::Future, rc::Rc};
+use std::{borrow::Cow, collections::HashMap, future::Future};
 
 use discordant_types::{
     ApplicationCommand, Interaction, InteractionCallbackType, InteractionResponse, InteractionType,
@@ -9,7 +9,7 @@ use http::{HeaderMap, StatusCode};
 use crate::{discord_verify, DiscordState, DiscordVerify};
 
 type HandleAction<'a, S> =
-    Rc<dyn 'a + Fn(S, Interaction) -> LocalBoxFuture<'a, Result<InteractionResponse, StatusCode>>>;
+    Box<dyn 'a + Fn(S, Interaction) -> LocalBoxFuture<'a, Result<InteractionResponse, StatusCode>>>;
 
 pub struct CommandHandler<'a, S>
 where
@@ -29,7 +29,7 @@ where
     {
         Self {
             command,
-            handler: Rc::new(move |state, interaction| Box::pin(handler(state, interaction))),
+            handler: Box::new(move |state, interaction| Box::pin(handler(state, interaction))),
         }
     }
 }
@@ -46,7 +46,7 @@ where
     where
         R: Future<Output = Result<InteractionResponse, StatusCode>> + 'a,
     {
-        Self(Rc::new(move |state, interaction| {
+        Self(Box::new(move |state, interaction| {
             Box::pin(handler(state, interaction))
         }))
     }

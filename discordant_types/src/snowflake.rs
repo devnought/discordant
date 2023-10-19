@@ -9,6 +9,10 @@ impl Snowflake {
     pub fn timestamp(&self) -> i64 {
         (self.0 as i64 >> 22) + 1420070400000
     }
+
+    pub fn bytes(&self) -> [u8; 8] {
+        self.0.to_le_bytes()
+    }
 }
 
 impl Display for Snowflake {
